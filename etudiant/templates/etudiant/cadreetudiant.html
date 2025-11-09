@@ -1,0 +1,41 @@
+<div class="card">
+
+
+    <img src="{{ templateData.etudiant.photo.url }}" class="card-img-top rounded" width="60">
+
+
+    <div class="card-body">
+        <h3 class="card-title">
+            {{ templateData.etudiant.genre }}
+            {{ templateData.etudiant.nom }}
+            {{ templateData.etudiant.prenom }}</h3>
+        <h4>{{ templateData.etudiant.numero }}</h4>
+
+    </div>
+    <ul class="list-group list-group-flush">
+        <li class="list-group-item">ANNEE ANTERIEURE : {{ templateData.etudiant.Nmoinsun }}
+        </li>
+        {% if templateData.etudiant.iaL2 %}
+        <li class="list-group-item">Emjambeur
+        </li>
+        {% endif %}
+        {% if templateData.etudiant.alternant %}
+        <li class="list-group-item">Alternant
+        </li>
+        {% endif %}
+        {% if templateData.etudiant.neu %}
+        <li class="list-group-item">N.E.U.
+        </li>
+        {% endif %}
+    </ul>
+    <h4>Inscription L3 GMA</h4>
+    <ul>
+        {% for insdipl in templateData.listeinsdiplome %}
+        <li>{{ insdipl.anneeuniv.anneeuniv }}</li>
+        {% endfor %}
+    </ul>
+    <div class="card-body">
+        <h4>Avis de poursuite d'étude</h4>
+        {{ templateData.insdiplome.get_avispoursuite_display }}
+    </div>
+</div>

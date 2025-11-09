@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<div class="p-5 ">
+    <div class="container">
+        <h2>Inscription matière </h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Valider</button>
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<div class="p-3">
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col mx-auto mb-3">
+                <h2> {{ templateData.matiere.codeapogee }} : {{ templateData.matiere.nom }}</h2>
+                <hr />
+            </div>
+        </div>
+        <div class="row">
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">rang</th>
+                        <th scope="col">nom</th>
+                        <th scope="col">prénom</th>
+                        <th scope="col">moyenne</th>
+                        <th scope="col">CC1</th>
+                        <th scope="col">CC2</th>
+                        <th scope="col">CC3</th>
+                        <th scope="col">Statut</th>
+                    </tr>
+                </thead>
+                {% for inscrimat in templateData.listeinscritmat %}
+                <tr>
+                    <th scope="row">{{ inscrimat.rang }}</th>
+                    <td>{{ inscrimat.etudiant.nom }}</td>
+                    <td>{{ inscrimat.etudiant.prenom }}</td>
+                    <td class="fw-bold">{{ inscrimat.moyenne|floatformat:2 }}</td>
+                    <td>{{inscrimat.notecc1|floatformat:2 }}</td>
+                    <td>{{inscrimat.notecc2|floatformat:2 }}</td>
+                    <td>{{inscrimat.notecc3|floatformat:2 }}</td>
+                    <td>{{inscrimat.statut }}</td>
+                </tr>
+                {% endfor %}
+
+            </table>
+
+        </div>
+
+
+    </div>
+</div>
+{% endblock content %}

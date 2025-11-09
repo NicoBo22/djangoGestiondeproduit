@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<div class="p-5 ">
+    <div class="container">
+        <div class="row">
+            <div class="col-3 align-self-start">
+                {% include "etudiant/cadreetudiant.html" %}
+            </div>
+
+
+            <div class="col align-self-start">
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th> Semestre</th>
+                            <th>Moyenne</th>
+                            <th>Statut</th>
+                            <th>Rang</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>
+                                <h4>S5</h4>
+                            </th>
+                            <th>
+                                <h4>{{ templateData.insdiplome.noteSem1|floatformat:2 }}</h4>
+                            </th>
+                            <th>
+                                <h4>{{ templateData.insdiplome.statutS1 }} </h4>
+                            </th>
+                            <th>
+                                <h4>{{ templateData.insdiplome.rangSem1 }}</h4>
+                            </th>
+                        </tr>
+                        {% if templateData.S2 %}
+                        <tr>
+                            <th>
+                                <h4>S6</h4>
+                            </th>
+                            <th>
+                                <h4>{{ templateData.insdiplome.noteSem2|floatformat:2 }}</h4>
+                            </th>
+                            <th>
+                                <h4>{{ templateData.insdiplome.statutS2 }} </h4>
+                            </th>
+                            <th>
+                                <h4>{{ templateData.insdiplome.rangSem2 }}</h4>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>
+                                <h4>Année</h4>
+                            </th>
+                            <th>
+                                <h4>{{ templateData.insdiplome.noteAnnee|floatformat:2 }}</h4>
+                            </th>
+                            <th>
+                                <h4>{{ templateData.insdiplome.statutDipl }} </h4>
+                            </th>
+                            <th>
+                                <h4>{{ templateData.insdiplome.rangAnnee }}</h4>
+                            </th>
+                        </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Code</th>
+                            <th scope="col">Matière</th>
+                            <th scope="col">Note CC1</th>
+                            <th scope="col">Note CC2</th>
+                            <th scope="col">Note CC3</th>
+                            <th scope="col">Moyenne</th>
+                            <th scope="col">Statut</th>
+                            <th scope="col">Rang</th>
+                            <th scope="col">Année universitaire</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for inscritmat in templateData.listeinscritmat %}
+                        {% if inscritmat.moyenne is None %}
+                        <tr>
+                            {% elif inscritmat.moyenne >= 10 %}
+                        <tr class="table-success">
+                            {% elif inscritmat.moyenne >= 7 %}
+                        <tr class="table-warning">
+                            {% else %}
+                        <tr class="table-danger">
+                            {% endif %}
+                            <th scope="row">
+                                {% if perms.gestiondejury.change_etudiant %}
+                                <a class="btn btn-success btn-sm"
+                                    href="{% url 'matiere:editnotes' inscritmat.matiere.codeapogee inscritmat.etudiant.id %}"
+                                    role="button">
+                                    {{ inscritmat.matiere.codeapogee }}</a>
+                                {% else %}
+
+                                {{ inscritmat.matiere.codeapogee }}
+
+                                {% endif %}
+                            </th>
+
+
+
+                            <td>{{ inscritmat.matiere.nom }}</td>
+                            <td>{{ inscritmat.notecc1|floatformat:2 }}</td>
+                            <td>{{ inscritmat.notecc2|floatformat:2 }}</td>
+                            <td>{{ inscritmat.notecc3|floatformat:2 }}</td>
+                            <td class="fw-bold">{{ inscritmat.moyenne|floatformat:2}}</td>
+                            <td>{{ inscritmat.statut }}</td>
+                            <td>{{ inscritmat.rang }}</td>
+
+                            <td>{{ inscritmat.anneeuniv.anneeuniv }}</td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="row p-2">
+
+
+        <div class="col-3 ">
+            <a class="btn btn-primary btn-sm" href="{% url 'etudiant:index'  %}" role="
+                button">Retour</a>
+        </div>
+
+
+    </div>
+</div>
+</div>
+
+
+
+
+
+
+{% endblock content %}

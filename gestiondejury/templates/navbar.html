@@ -1,0 +1,55 @@
+<nav class="navbar navbar-expand-lg fixed-top bg-body-tertiary">
+    <div class="container-fluid">
+
+        <a class="navbar-brand" href="#">Accueil </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{% url 'home:index' %}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'matiere:index' %}">Matières</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle " href="#" role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        Etudiant
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'etudiant:index' %}">Etudiants</a></li>
+                        <li><a class="dropdown-item" href="{% url 'etudiant:liste' alt='nonalt' %}">Non
+                                alternants</a>
+                        </li>
+                        <li><a class="dropdown-item" href="{% url 'etudiant:liste' alt='alt' %}">Alternants</a></li>
+                        <li><a class="dropdown-item" href="{% url 'etudiant:liste' alt='neu' %}">N.E.U.</a></li>
+                    </ul>
+
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        Jury
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="{% url 'jury:juryS5' 1 %}">Jury S5 Non Alternants</a></li>
+                        <li><a class="dropdown-item" href="{% url 'jury:juryS5' 1 %}?alt=true">Jury S5 Alternants</a>
+                        </li>
+
+                    </ul>
+
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Année</a>
+                </li>
+            </ul>
+
+            <a href="{% url 'comptes:logout' %}" class="btn btn-primary btn-lg active" role="button"
+                aria-pressed="true">Déconnexion : {{ user.username }}</a>
+
+        </div>
+    </div>
+</nav>

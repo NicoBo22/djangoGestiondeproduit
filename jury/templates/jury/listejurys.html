@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<div class="p-3">
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col mx-auto mb-3">
+                <h2>Liste des jurys</h2>
+                <hr />
+                <table class="table">
+
+                    <tr>
+
+                        <th scope="col">Diplome</th>
+                        <th scope="col">Date</th>
+                        <th scope="col"> Alternant</th>
+                        <th scope="col"> Statut</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for jury in templateData.listeJurys %}
+
+                        <tr class="{% cycle 'table-light' '' %}">
+
+                            <td> {{ jury.diplome.nom }} {{ jury.semestre }}</td>
+                            <td> {{ jury.datejury|date:"SHORT_DATE_FORMAT" }} {{ jury.datejury|time:"H:i" }}</td>
+                            <td>{% if jury.alternant == True %} alternant
+                                {% else %}
+                                non alternant
+                                {% endif %}
+                            </td>
+                            <td>{% if jury.fini == True %}
+                                clos
+                                {% else %}
+                                En cours
+                                {% endif %}
+                            </td>
+
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+
+
+
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

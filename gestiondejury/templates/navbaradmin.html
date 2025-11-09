@@ -1,0 +1,44 @@
+<nav class="navbar fixed-bottom navbar-light bg-light">
+    <div class="container">
+
+
+        <div class="btn-group dropup">
+            <button type="button" class="btn btn-secondary">
+                Jury admin S5
+            </button>
+            <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
+                data-bs-toggle="dropdown" aria-expanded="false">
+
+                <span class="visually-hidden">menu admin 1</span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item"
+                        href="{% url 'adminjury:calculmoyennesemestre' sem='S5' alt='nonalt'  %}">Calcul moyenne
+                        matières
+                        S5 Non Alternants</a></li>
+                <li><a class="dropdown-item" href="{% url 'adminjury:calculsemestre' sem='S5' alt='nonalt'  %}">Calcul
+                        moyenne S5 Non Alternants</a></li>
+                <li><a class="dropdown-item"
+                        href="{% url 'adminjury:calculmoyennesemestre' sem='S5' alt='alt'  %}">Calcul moyenne matières
+                        S5 Alternants</a></li>
+                <li><a class="dropdown-item" href="{% url 'adminjury:calculsemestre' sem='S5' alt='alt'  %}">Calcul
+                        moyenne S5 Alternants</a></li>
+            </ul>
+        </div>
+        <div class="btn-group dropup">
+            <button type="button" class="btn btn-secondary">
+                Jury admin S6
+            </button>
+            <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split"
+                data-bs-toggle="dropdown" aria-expanded="false">
+
+                <span class="visually-hidden">menu admin 2</span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Jury S6 Non Alternants</a></li>
+                <li><a class="dropdown-item" href="#">Jury S6 Alternants</a></li>
+            </ul>
+        </div>
+
+    </div>
+</nav>

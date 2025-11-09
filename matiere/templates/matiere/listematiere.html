@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<div class="p-3">
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col mx-auto mb-3">
+                <h2>Liste des matieres</h2>
+                <hr />
+            </div>
+        </div>
+        <div class="row">
+            <h3>Matières S5</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Code APOGEE
+
+                        </th>
+                        <th scope="col">nom</th>
+                        <th scope="col">CC1</th>
+                        <th scope="col">CC2</th>
+                        <th scope="col">CC3</th>
+
+                    </tr>
+                </thead>
+                {% for matiere in templateData.matiereS5 %}
+                <tr>
+
+                    <th scope="row">
+                        <a href="{% url 'matiere:notes' code=matiere.codeapogee  %}" class="btn bg-success text-white">
+                            {{ matiere.codeapogee }}
+                        </a>
+                    </th>
+                    <td>{{ matiere.nom }}</td>
+                    <td>{{ matiere.coefcc1 }}</td>
+                    <td>{{ matiere.coefcc2 }}</td>
+                    <td>{{ matiere.coefcc3 }}</td>
+
+                </tr>
+                {% endfor %}
+
+            </table>
+
+        </div>
+        <div class="row">
+            <h3>Matières S6</h3>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Code APOGEE</th>
+                        <th scope="col">nom</th>
+                        <th scope="col">CC1</th>
+                        <th scope="col">CC2</th>
+                        <th scope="col">CC3</th>
+                    </tr>
+                </thead>
+                {% for matiere in templateData.matiereS6 %}
+                <tr>
+                    <th scope="row"><a href="{% url 'matiere:notes' code=matiere.codeapogee  %}"
+                            class="btn bg-success text-white">
+                            {{ matiere.codeapogee }}
+                        </a></th>
+                    <td>{{ matiere.nom }}</td>
+                    <td>{{ matiere.coefcc1 }}</td>
+                    <td>{{ matiere.coefcc2 }}</td>
+                    <td>{{ matiere.coefcc3 }}</td>
+                </tr>
+                {% endfor %}
+
+            </table>
+
+        </div>
+
+    </div>
+</div>
+{% endblock content %}

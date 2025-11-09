@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<div class="p-3">
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col mx-auto mb-3">
+                <h2> {{ templateData.matiere.codeapogee }} : {{ templateData.matiere.nom }}</h2>
+                <h2>{{ templateData.etudiant.nom }} {{ templateData.etudiant.prenom }}</h2>
+                <hr />
+            </div>
+        </div>
+        <div class="row">
+            <h1>Entrez les notes de CC</h1>
+            <form method="post">
+                {% csrf_token %}
+                {{ notesCCform.as_p }}
+                <button type="submit">Entrez</button>
+            </form>
+
+
+        </div>
+
+        {% if templatedata.etudiant.alt is true %}
+        <a class="btn btn-primary btn-sm mt-3"
+            href="{% url 'matiere:editnotesmatiere' templateData.matiere.codeapogee 'alt' templateData.rangalpha|add:1 %}"
+            role="button">Suivant</a>
+
+        {% else %}
+        <a class="btn btn-primary btn-sm mt-3"
+            href="{% url 'matiere:editnotematiere' templateData.matiere.codeapogee 'nonalt' templateData.rangalpha|add:1 %}"
+            role="button">Suivant</a>
+        {% endif %}
+    </div>
+
+
+
+</div>
+{% endblock content %}

@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+<div class="p-3">
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col mx-auto mb-3">
+                <h2>{{ templateData.diplome.codeapogee }} {{ templateData.diplome.nom }}</h2>
+                <hr>
+                <h2>Jury S5 : {{ templateData.annee.anneeuniv}}</h2>
+
+            </div>
+            <div class="col-3">
+                {% if templateData.insdiplome.rangSem1 != 1 %}
+                {% if templateData.insdiplome.etudiant.alternant %}
+                <a class="btn btn-primary btn-sm"
+                    href="{% url 'jury:juryS5' templateData.insdiplome.rangSem1|add:-1 %}?alt=true"
+                    role="button">Précédent</a>
+                {% else %}
+                <a class="btn btn-primary btn-sm" href="{% url 'jury:juryS5' templateData.insdiplome.rangSem1|add:-1 %}"
+                    role="button">Précédent</a>
+                {% endif %}
+                {% endif %}
+            </div>
+            <div class="col-3">
+                {% if templateData.insdiplome.rangSem1 != templateData.nbreetudiants %}
+                {% if templateData.insdiplome.etudiant.alternant %} <a class="btn btn-primary btn-sm"
+                    href="{% url 'jury:juryS5' templateData.insdiplome.rangSem1|add:1 %}?alt=true" role="button">
+                    Suivant</a>
+                {% else %}
+                <a class="btn btn-primary btn-sm" href="{% url 'jury:juryS5' templateData.insdiplome.rangSem1|add:1 %}"
+                    role="button">Suivant</a>
+                {% endif %}
+                {% endif %}
+            </div>
+            <div class="row">
+                <div class="col-3 align-self-start">
+                    {% include "etudiant/cadreetudiant.html" %}
+                </div>
+                <div class="col align-self-start">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th> Semestre</th>
+                                <th>Moyenne</th>
+                                <th>Statut</th>
+                                <th>Date decision</th>
+                                <th>Rang</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>
+                                    <h4>S5</h4>
+                                </th>
+                                <th>
+                                    <h4>{{ templateData.insdiplome.noteSem1|floatformat:2 }}</h4>
+                                </th>
+                                <th>
+                                    <h4>{{ templateData.insdiplome.statutS1 }} </h4>
+
+
+                                </th>
+                                <th> {% if templateData.insdiplome.statutS1 == 'ADJ' %}
+                                    {{ templateData.insdiplome.datedecisionS1|date:"SHORT_DATE_FORMAT" }}
+                                    {% endif %}
+                                    {% if perms.gestiondejury.change_etudiant %}
+                                    {% if templateData.insdiplome.statutS1 == "AJ" %}
+                                    <a class="btn btn-success"
+                                        href="{% url 'jury:decisionS5' templateData.insdiplome.etudiant.id %}"
+                                        role="button">ADJ
+                                        S5</a>
+                                    {% endif %}
+                                    {% endif %}
+                                </th>
+                                <th>
+                                    <h4>{{ templateData.insdiplome.rangSem1 }}/{{ templateData.nbreetudiants }}</h4>
+                                </th>
+                            </tr>
+                            {% if templateData.S2 %}
+                            <tr>
+                                <th>
+                                    <h4>S6</h4>
+                                </th>
+                                <th>
+                                    <h4>{{ templateData.insdiplome.noteSem2|floatformat:2 }}</h4>
+                                </th>
+                                <th>
+                                    <h4>{{ templateData.insdiplome.statutS2 }} </h4>
+                                </th>
+                                <th>
+                                    <h4>{{ templateData.insdiplome.rangSem2 }}</h4>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th>
+                                    <h4>Année</h4>
+                                </th>
+                                <th>
+                                    <h4>{{ templateData.insdiplome.noteAnnee|floatformat:2 }}</h4>
+                                </th>
+                                <th>
+                                    <h4>{{ templateData.insdiplome.statutDipl }} </h4>
+                                </th>
+                                <th>
+                                    <h4>{{ templateData.insdiplome.rangAnnee }}</h4>
+                                </th>
+                            </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+
+                    {% if perms.gestiondejury.change_etudiant %}
+                    {% include "jury/tablejuryPresident.html" %}
+                    {% else %}
+
+                    {% include "jury/tablejuryMembre.html" %}
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+    {% if perms.gestiondejury.change_etudiant %}
+    <div class="row justify-content-center">
+
+        <h3>Avis de poursuite d'étude</h3>
+        <div class="col-3">
+            <a class="btn btn-success"
+                href="{% url 'jury:avispoursuite' templateData.insdiplome.etudiant.id  %}?avis=Tf" role="button">Très
+                favorable</a>
+        </div>
+        <div class="col-3">
+            <a class="btn btn-success"
+                href="{% url 'jury:avispoursuite' templateData.insdiplome.etudiant.id  %}?avis=Fa"
+                role="button">Favorable</a>
+        </div>
+        <div class="col-3">
+            <a class="btn btn-success"
+                href="{% url 'jury:avispoursuite' templateData.insdiplome.etudiant.id  %}?avis=Re"
+                role="button">Réservé</a>
+        </div>
+        <div class="col-3">
+            <a class="btn btn-danger" href="{% url 'jury:avispoursuite' templateData.insdiplome.etudiant.id  %}?avis=De"
+                role="button">Défavorable</a>
+        </div>
+
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}
