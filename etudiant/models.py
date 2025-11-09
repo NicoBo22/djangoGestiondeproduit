@@ -9,9 +9,7 @@ class Etudiant(models.Model):
         Monsieur = 'M.'
         Madame = 'Mme'
 
-    class Erasmus(models.TextChoices):
-        ENTRANT='E','Entrant'
-        SORTANT = 'S','Sortant'
+
 
     id = models.AutoField(primary_key=True)
     numero = models.IntegerField(unique=True)
@@ -26,8 +24,7 @@ class Etudiant(models.Model):
     neu = models.BooleanField(default=False)
     tierstemps = models.BooleanField(default=False)
     rse = models.BooleanField(default=False)
-    erasmus = models.CharField(choices=Erasmus.choices,
-                                     max_length=1,null = True, blank=True)
+
     photo = models.ImageField(upload_to='photos/', default='photos/image.jpg')
 
    
@@ -46,6 +43,9 @@ class Inscriptiondiplome(models.Model):
         FAVORABLE = 'FA', 'Avis favorable'
         RESERVE = 'RE', 'Avis réservé'
         DEFAVORABLE = 'DE', 'Avis défavorable'
+    class Erasmus(models.TextChoices):
+        ENTRANT='E','Entrant'
+        SORTANT = 'S','Sortant'
 
     etudiant = models.ForeignKey(Etudiant,on_delete=models.CASCADE, related_name="inscriptionDipEtud")
     diplome = models.ForeignKey(Diplome,on_delete=models.CASCADE, related_name="inscriptionDip")
@@ -64,6 +64,8 @@ class Inscriptiondiplome(models.Model):
     datedecisionS2 = models.DateTimeField(null=True,default=None)
     avispoursuite = models.CharField(choices=AvisPoursuite.choices, 
                                      max_length=2,null = True)
+    erasmus = models.CharField(choices=Erasmus.choices,
+                                     max_length=1,null = True, blank=True)
     def __str__(self):
         return self.anneeuniv.anneeuniv + ' : ' +self.etudiant.nom +' '+self.diplome.nom      
 

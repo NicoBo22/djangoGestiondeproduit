@@ -32,10 +32,14 @@
     <ul>
         {% for insdipl in templateData.listeinsdiplome %}
         <li>{{ insdipl.anneeuniv.anneeuniv }}</li>
+        {% if insdipl.erasmus is not None %}
+        ERASMUS : {{ insdipl.get_erasmus_display }}
+        {% endif %}
         {% endfor %}
     </ul>
     <div class="card-body">
         <h4>Avis de poursuite d'étude</h4>
+
         {{ templateData.insdiplome.get_avispoursuite_display }}
     </div>
 </div>

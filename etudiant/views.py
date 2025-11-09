@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required,permission_required
 from django.shortcuts import render,redirect
 from .models import Inscriptionmat,Inscriptiondiplome,Etudiant
 from diplome.models import Anneeuniv
+from matiere.models import Matiere
 from .forms import EtudiantForm,InscriptiondiplForm,MatiereSelectionForm
 from django.core.exceptions import ObjectDoesNotExist
 # Create your views here.
@@ -45,7 +46,7 @@ def addinscriptiondipl(request):
             etudiant =form.cleaned_data['etudiant']
 
             form.save()
-            return redirect('etudiant:inscriptionmat',id = etudiant.id)
+            return redirect('etudiant:addinscriptionmat',id = etudiant.id)
     else:
         form=InscriptiondiplForm()
     templateData = {}
@@ -55,17 +56,32 @@ def addinscriptiondipl(request):
 
 @permission_required('etudiant.change_etudiant', raise_exception=True)
 @login_required
-def addinscriptionmat(request):
-    templateData = {}
-    templateData ['titre']= "Inscription matières "
+def addinscriptionmat(request,id):
+    etudiant = Etudiant.objects.get(id=id)
+    anneeunivencours = Anneeuniv.objects.get(encours = True)
+    
+
     if request.method == "POST":
         form = MatiereSelectionForm(request.POST)
         if form.is_valid():
             matieres_selectionnees = form.cleaned_data['matieres']
-            # fais quelque chose avec matieres_selectionnees
+            listematiere =Matiere.objects.all()
+            for matiere in listematiere:
+                inscriptionmatiere=Inscriptionmat.objects.filter(anneeuniv=anneeunivencours,etudiant=etudiant,matiere=matiere)
+                if (not inscriptionmatiere.exists()) and (matiere in matieres_selectionnees):
+                    inscriptionmatiere = Inscriptionmat(anneeuniv=anneeunivencours,etudiant=etudiant,matiere=matiere)
+                    inscriptionmatiere.save()
+                elif inscriptionmatiere.exists() and not (matiere in matieres_selectionnees):
+                    inscriptionmatiere.delete()
+            return redirect('etudiant:vue',id=etudiant.id)
+                    
+
+
     else:
         form = MatiereSelectionForm()
-
+    templateData = {}
+    templateData ['titre']= "Inscription matières " + etudiant.nom +" "+etudiant.prenom
+    templateData ['etudiant']= etudiant  
     return render(request, "etudiant/inscriptionmat.html", {'form': form, 'templatedata':templateData})
 
 

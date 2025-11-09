@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'comptes',
     'diplome',
     'adminjury',
-    'jury'
+    'jury',
+    'tableurxl',
 ]
 
 MIDDLEWARE = [
@@ -55,6 +56,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
 ]
 
 ROOT_URLCONF = 'gestiondejury.urls'
@@ -147,3 +149,6 @@ LOGIN_URL ='/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+# Durée de vie d’une session en secondes
+SESSION_COOKIE_AGE = 2000

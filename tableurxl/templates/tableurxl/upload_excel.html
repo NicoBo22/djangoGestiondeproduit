@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+
+
+<h1>Upload Excel</h1>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Upload</button>
+</form>
+
+{% if data %}
+<h2>Contenu du fichier Excel</h2>
+<table border="1">
+    <tr>
+        {% for key in data.0.keys %}
+        <th>{{ key }}</th>
+        {% endfor %}
+    </tr>
+    {% for row in data %}
+    <tr>
+        {% for value in row.values %}
+        <td>{{ value }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+{% endif %}
+
+
+
+
+{% endblock content %}
