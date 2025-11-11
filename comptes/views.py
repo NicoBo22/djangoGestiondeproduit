@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import login as auth_login, authenticate,logout as auth_logout
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
+from diplome.models import Anneeuniv
 
 # Create your views here.
 @login_required
@@ -23,5 +24,8 @@ def login(request):
             return render(request, 'comptes/login.html', {'template_data': template_data})
         else:
             auth_login(request, user)
+
+            request.session['anneesession']=Anneeuniv.objects.get(encours = True).id
+            request.session['diplome']="K3MKGE"
             return redirect('home:index')
 

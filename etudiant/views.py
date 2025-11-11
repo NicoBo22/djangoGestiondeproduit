@@ -10,13 +10,13 @@ from django.core.exceptions import ObjectDoesNotExist
 
 @login_required
 def indexetudiant(request):
-    anneeunivencours = Anneeuniv.objects.get(encours = True)
-
+    idanneeunivsession = request.session.get('anneesession')
+    anneeuniv=Anneeuniv.objects.get(id=idanneeunivsession)
     templateData = {}
     templateData ['titre']= "Etudiants"
-    ListeInscritDiplome = Inscriptiondiplome.objects.filter(anneeuniv=anneeunivencours).order_by('etudiant__nom','etudiant__prenom')
+    ListeInscritDiplome = Inscriptiondiplome.objects.filter(anneeuniv=anneeuniv).order_by('etudiant__nom','etudiant__prenom')
     templateData ['inscritdiplome']= ListeInscritDiplome
-    templateData['anneeuniv'] = anneeunivencours
+    templateData['anneeuniv'] = anneeuniv
     return render (request,'etudiant/listeetudiant.html'
                   ,{'templateData': templateData} )
 
@@ -95,11 +95,11 @@ def listeetudiant(request,alt):
     ListeInscritDiplome = Inscriptiondiplome.objects.filter(anneeuniv=anneeunivencours)
     if alt == 'alt':
         
-        ListeInscritDiplome = ListeInscritDiplome.filter(etudiant__alternant=True).order_by('etudiant__nom','etudiant__prenom')
+        ListeInscritDiplome = ListeInscritDiplome.filter(alternant=True).order_by('etudiant__nom','etudiant__prenom')
     elif alt == 'neu':
-        ListeInscritDiplome = ListeInscritDiplome.filter(etudiant__neu=True).order_by('etudiant__nom','etudiant__prenom')
+        ListeInscritDiplome = ListeInscritDiplome.filter(neu=True).order_by('etudiant__nom','etudiant__prenom')
     else:
-        ListeInscritDiplome = ListeInscritDiplome.filter(etudiant__alternant=False).order_by('etudiant__nom','etudiant__prenom')
+        ListeInscritDiplome = ListeInscritDiplome.filter(alternant=False).order_by('etudiant__nom','etudiant__prenom')
 
     
     templateData ['inscritdiplome']= ListeInscritDiplome

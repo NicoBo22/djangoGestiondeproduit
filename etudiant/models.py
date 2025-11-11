@@ -19,11 +19,7 @@ class Etudiant(models.Model):
 
     datedenaissance = models.DateField( null=True)
     Nmoinsun = models.CharField(max_length=255, null=True,blank=True)
-    iaL2 = models.BooleanField(default=False)
-    alternant = models.BooleanField(default=False)
-    neu = models.BooleanField(default=False)
-    tierstemps = models.BooleanField(default=False)
-    rse = models.BooleanField(default=False)
+
 
     photo = models.ImageField(upload_to='photos/', default='photos/image.jpg')
 
@@ -66,6 +62,13 @@ class Inscriptiondiplome(models.Model):
                                      max_length=2,null = True)
     erasmus = models.CharField(choices=Erasmus.choices,
                                      max_length=1,null = True, blank=True)
+    iaL2 = models.BooleanField(default=False)
+    alternant = models.BooleanField(default=False)
+    neu = models.BooleanField(default=False)
+    tierstemps = models.BooleanField(default=False)
+    rse = models.BooleanField(default=False)
+    redoublant =models.BooleanField(default=False)
+
     def __str__(self):
         return self.anneeuniv.anneeuniv + ' : ' +self.etudiant.nom +' '+self.diplome.nom      
 

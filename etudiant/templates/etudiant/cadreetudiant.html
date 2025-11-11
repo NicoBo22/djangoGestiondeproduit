@@ -15,16 +15,20 @@
     <ul class="list-group list-group-flush">
         <li class="list-group-item">ANNEE ANTERIEURE : {{ templateData.etudiant.Nmoinsun }}
         </li>
-        {% if templateData.etudiant.iaL2 %}
+        {% if templateData.insdiplome.iaL2 %}
         <li class="list-group-item">Emjambeur
         </li>
         {% endif %}
-        {% if templateData.etudiant.alternant %}
+        {% if templateData.insdiplome.alternant %}
         <li class="list-group-item">Alternant
         </li>
         {% endif %}
-        {% if templateData.etudiant.neu %}
+        {% if templateData.insdiplome.neu %}
         <li class="list-group-item">N.E.U.
+        </li>
+        {% endif %}
+        {% if templateData.insdiplome.redoublant %}
+        <li class="list-group-item">Redoublant
         </li>
         {% endif %}
     </ul>

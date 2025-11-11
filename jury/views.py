@@ -26,7 +26,7 @@ def juryS5(request,rang):
     diplomejury = Diplome.objects.get(codeapogee= codeAPOGEE)
     listeInscriptionDiplome =Inscriptiondiplome.objects.filter(diplome=diplomejury,
                                                       anneeuniv=anneeuniv,
-                                                      etudiant__alternant = alt)
+                                                      alternant = alt)
     nbreetudiants = len( listeInscriptionDiplome)
     listeInscriptionDiplome=listeInscriptionDiplome.order_by("-noteSem1")   
     etudiant =listeInscriptionDiplome[rang-1].etudiant
@@ -60,7 +60,7 @@ def decisionmat(request,etud,mat):
     insDiplome = get_object_or_404(Inscriptiondiplome, etudiant = etud,anneeuniv = anneeencours)
     rang = insDiplome.rangSem1
     messages.success(request, "ADJ effectué" )
-    if insmatetu.etudiant.alternant:
+    if  insDiplome.alternant:
         base_url = reverse('jury:juryS5',kwargs={'rang': rang})
         query_string =urlencode({'alt':'true'})
         url = f'{base_url}?{query_string}'
@@ -78,7 +78,9 @@ def decisionS5(request,etud):
     insS5etu.save()
     rang = insS5etu.rangSem1
     messages.success(request, "ADJ S5 effectué" )
-    if insS5etu.etudiant.alternant:
+    insDiplome = get_object_or_404(Inscriptiondiplome, etudiant = etud,anneeuniv = anneeencours)
+
+    if insDiplome.alternant:
         base_url = reverse('jury:juryS5',kwargs={'rang': rang})
         query_string =urlencode({'alt':'true'})
         url = f'{base_url}?{query_string}'
@@ -109,7 +111,7 @@ def avisPoursuiteEtude(request,etud):
 
     rang = insAvisetu.rangSem1
     messages.success(request, "Avis de poursuite d'étude réalisé" )
-    if etudiant.alternant:
+    if insAvisetu.alternant:
         base_url = reverse('jury:juryS5',kwargs={'rang': rang})
         query_string =urlencode({'alt':'true'})
         url = f'{base_url}?{query_string}'

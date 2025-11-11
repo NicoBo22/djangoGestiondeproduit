@@ -17,12 +17,12 @@
                     <img src="{{ inscription.etudiant.photo.url }}" class="card-img-top rounded img-card-200">
 
                     <div class="car.d-body text-center">
-                        {% if inscription.etudiant.alternant %}
+                        {% if inscription.alternant %}
                         <a href="{% url 'etudiant:vue' id=inscription.etudiant.id %}" class="btn bg-info text-white">
                             {{ inscription.etudiant.genre }} {{ inscription.etudiant.nom }}
                             {{ inscription.etudiant.prenom }} <br>{{ inscription.etudiant.numero }}
                         </a>
-                        {% elif inscription.etudiant.neu %}
+                        {% elif inscription.neu %}
                         <a href="{% url 'etudiant:vue' id=inscription.etudiant.id %}" class="btn bg-warning text-white">
                             {{ inscription.etudiant.genre }} {{ inscription.etudiant.nom }}
                             {{ inscription.etudiant.prenom }} <br>{{ inscription.etudiant.numero }}

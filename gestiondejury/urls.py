@@ -28,6 +28,7 @@ urlpatterns = [
     path('adminjury/', include('adminjury.urls')),
     path('jury/', include('jury.urls')),
     path('excel/',include('tableurxl.urls')),
+    path('diplome/',include('diplome.urls')),
 
 ]
 urlpatterns += static(settings.MEDIA_URL,

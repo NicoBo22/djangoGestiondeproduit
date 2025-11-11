@@ -13,7 +13,7 @@
             </div>
             <div class="col-3">
                 {% if templateData.insdiplome.rangSem1 != 1 %}
-                {% if templateData.insdiplome.etudiant.alternant %}
+                {% if templateData.insdiplome.alternant %}
                 <a class="btn btn-primary btn-sm"
                     href="{% url 'jury:juryS5' templateData.insdiplome.rangSem1|add:-1 %}?alt=true"
                     role="button">Précédent</a>
@@ -25,7 +25,7 @@
             </div>
             <div class="col-3">
                 {% if templateData.insdiplome.rangSem1 != templateData.nbreetudiants %}
-                {% if templateData.insdiplome.etudiant.alternant %} <a class="btn btn-primary btn-sm"
+                {% if templateData.insdiplome.alternant %} <a class="btn btn-primary btn-sm"
                     href="{% url 'jury:juryS5' templateData.insdiplome.rangSem1|add:1 %}?alt=true" role="button">
                     Suivant</a>
                 {% else %}

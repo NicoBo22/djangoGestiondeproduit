@@ -152,3 +152,4 @@ MEDIA_URL = '/media/'
 
 # Durée de vie d’une session en secondes
 SESSION_COOKIE_AGE = 2000
+SESSION_SAVE_EVERY_REQUEST = True
