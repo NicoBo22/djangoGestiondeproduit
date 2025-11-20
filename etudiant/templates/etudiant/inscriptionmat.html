@@ -5,6 +5,7 @@
     <div class="container">
         <h2>Inscription matières de {{ templatedata.etudiant.genre }}
             {{ templatedata.etudiant.nom }} {{templatedata.etudiant.prenom }}</h2>
+        <h2>Année universitaire : {{ templatedata.annee.anneeuniv }}</h2>
 
         <form method="post">
             {% csrf_token %}

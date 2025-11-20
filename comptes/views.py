@@ -25,7 +25,7 @@ def login(request):
         else:
             auth_login(request, user)
 
-            request.session['anneesession']=Anneeuniv.objects.get(encours = True).id
+            request.session['anneesession']=Anneeuniv.objects.get(encours = True).anneeuniv
             request.session['diplome']="K3MKGE"
             return redirect('home:index')
 

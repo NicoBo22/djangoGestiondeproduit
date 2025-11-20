@@ -18,8 +18,8 @@ def fonctioninscriptionsetudiant():
         for i in [1,2,3,4,5,6,7,8,11]:
 
             inscriptionmatiere= Inscriptionmat()
-            inscriptionmatiere.anneeuniv = anneeunivencours
-            inscriptionmatiere.etudiant = etudiant
+            
+            inscriptionmatiere.inscriptiondiplome=inscriptiondiplome
             inscriptionmatiere.matiere = Matiere.objects.get(id=i)
             inscriptionmatiere.notecc1 = calculNote()
             inscriptionmatiere.notecc2 = calculNote()
@@ -27,8 +27,8 @@ def fonctioninscriptionsetudiant():
            
             inscriptionmatiere.save()
         inscriptionmatiere= Inscriptionmat()
-        inscriptionmatiere.anneeuniv = anneeunivencours
-        inscriptionmatiere.etudiant = etudiant
+        inscriptionmatiere.inscriptiondiplome=inscriptiondiplome
+
         i = choice([9,10])
 
         inscriptionmatiere.matiere = Matiere.objects.get(id=i)
@@ -39,8 +39,7 @@ def fonctioninscriptionsetudiant():
         inscriptionmatiere.save()
         for matiere in ListeMatiereS6:
             inscriptionmatiere= Inscriptionmat()
-            inscriptionmatiere.anneeuniv = anneeunivencours
-            inscriptionmatiere.etudiant = etudiant
+            inscriptionmatiere.inscriptiondiplome=inscriptiondiplome
             inscriptionmatiere.matiere = matiere
             inscriptionmatiere.notecc1 = calculNote()
             inscriptionmatiere.notecc2 = calculNote()

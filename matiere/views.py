@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required,permission_required
 from django.contrib import messages
 from .models import Matiere
 from diplome.models import Anneeuniv
-from etudiant.models import Inscriptionmat,Etudiant
+from etudiant.models import Inscriptionmat,Etudiant,Inscriptiondiplome
 from .forms import CCForm
 from services.calcul import  moyenneMat,calculderang
 
@@ -24,10 +24,11 @@ def indexmatiere(request):
 @login_required
 def notes(request,code):
     matiere = Matiere.objects.get(codeapogee=code)
+    anneeunivencours = Anneeuniv.objects.get(encours = True)
     alt = request.GET.get('alt','false').lower()=='true'
-    ListeInscritmat =Inscriptionmat.objects.filter(matiere=matiere )
+    ListeInscritmat =Inscriptionmat.objects.filter(matiere=matiere ,inscriptiondiplome__anneeuniv=anneeunivencours)
     if alt :
-        ListeInscritmat=ListeInscritmat.filter(etudiant__alternant=alt)
+        ListeInscritmat=ListeInscritmat.filter(inscriptiondiplome__alternant=alt)
     ListeInscritmat = ListeInscritmat.exclude(moyenne__isnull = True)
     ListeInscritmat = ListeInscritmat.order_by('-moyenne')
     templateData = {}
@@ -41,10 +42,10 @@ def notes(request,code):
 @permission_required('gestiondejury.change_etudiant', raise_exception = True)
 def editnotes(request,code,etudiant):
     matiere = Matiere.objects.get(codeapogee=code)
-    anneunivencours = Anneeuniv.objects.get(encours = True)
+    anneeunivencours = Anneeuniv.objects.get(encours = True)
     etudiant= Etudiant.objects.get(id=etudiant)
-    inscritmat = get_object_or_404(Inscriptionmat, etudiant = etudiant,matiere = matiere,anneeuniv = anneunivencours)
-
+    inscritmat = get_object_or_404(Inscriptionmat, inscriptiondiplome__etudiant = etudiant,matiere = matiere,inscriptiondiplome__anneeuniv = anneeunivencours)
+    inscridipl = Inscriptiondiplome.objects.get(etudiant=etudiant,anneeuniv=anneeunivencours)
     if request.method == 'POST':
         notesCCform = CCForm(request.POST)
 
@@ -66,12 +67,13 @@ def editnotes(request,code,etudiant):
                 inscritmat.statut = "ADM"
             elif inscritmat.statut != "ADJ":
                 inscritmat.statut = "AJ"
-            if etudiant.alternant:
-                listeInscrimat =Inscriptionmat.objects.filter(anneeuniv=anneunivencours,matiere=matiere,etudiant__alternant=True)
+            
+            if inscritmat.inscriptiondiplome.alternant:
+                listeInscrimat =Inscriptionmat.objects.filter(anneeuniv=anneeunivencours,matiere=matiere,inscriptiondiplome__alternant=True)
              
             else:
 
-                listeInscrimat =Inscriptionmat.objects.filter(anneeuniv=anneunivencours,matiere=matiere,etudiant__alternant=False)
+                listeInscrimat =Inscriptionmat.objects.filter(inscriptiondiplome__anneeuniv=anneeunivencours,matiere=matiere,inscriptiondiplome__alternant=False)
            
             calculderang(listeInscrimat)
             
@@ -96,13 +98,13 @@ def editnotesmatiere(request,code,alt,etudiantalpha):
     etudiantalpha =int(etudiantalpha)
     matiere = Matiere.objects.get(codeapogee=code)
     anneunivencours = Anneeuniv.objects.get(encours = True)
-    ListeInscritmat =Inscriptionmat.objects.filter(matiere=matiere,anneeuniv=anneunivencours )
+    ListeInscritmat =Inscriptionmat.objects.filter(matiere=matiere,inscriptiondiplome__anneeuniv=anneunivencours )
 
     if alt =="alt":
-         ListeInscritmat =  ListeInscritmat.filter(etudiant__alternant=True).order_by('etudiant__nom','etudiant__prenom')
+         ListeInscritmat =  ListeInscritmat.filter(inscriptiondiplome__alternant=True).order_by('inscriptiondiplome__etudiant__nom','inscriptiondiplome__etudiant__prenom')
 
     else:
-         ListeInscritmat =  ListeInscritmat.filter(etudiant__alternant=False).order_by('etudiant__nom','etudiant__prenom')
+         ListeInscritmat =  ListeInscritmat.filter(inscriptiondiplome____alternant=False).order_by('inscriptiondiplome__etudiant__nom','inscriptiondiplome__etudiant__prenom')
 
     inscritmat =  ListeInscritmat[etudiantalpha-1]
     if request.method == 'POST':
@@ -119,7 +121,8 @@ def editnotesmatiere(request,code,alt,etudiantalpha):
             inscritmat.notecc3 = cc3
             
             inscritmat.save()
-            messages.success(request, "Notes de "+str(matiere.nom)+" "+str(inscritmat.etudiant.nom) + " "+str(inscritmat.etudiant.prenom)+ " changées")
+            messages.success(request, "Notes de "+str(matiere.nom)+" "+str(inscritmat.inscriptiondiplome.etudiant.nom) +
+                              " "+str(inscritmat.inscriptiondiplome.etudiant.prenom)+ " changées")
            
     else :
         notesCCform = CCForm(inscrimat = inscritmat)
@@ -129,7 +132,7 @@ def editnotesmatiere(request,code,alt,etudiantalpha):
     templateData = {}
     templateData ['titre']= "Notes: " + matiere.nom
     templateData ['matiere']= matiere  
-    templateData ['etudiant']= inscritmat.etudiant
+    templateData ['etudiant']= inscritmat.inscriptiondiplome.etudiant
     templateData ['rangalpha']= etudiantalpha
     
     return render (request,'matiere/editnotesmatiere.html'

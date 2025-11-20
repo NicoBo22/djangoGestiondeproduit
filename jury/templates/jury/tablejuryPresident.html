@@ -28,7 +28,7 @@
             {% endif %}
             <th scope="row">
                 <a class="btn btn-success btn-sm"
-                    href="{% url 'matiere:editnotes' inscritmat.matiere.codeapogee inscritmat.etudiant.id %}"
+                    href="{% url 'matiere:editnotes' inscritmat.matiere.codeapogee inscritmat.inscriptiondiplome.etudiant.id %}"
                     role="button">
                     {{ inscritmat.matiere.codeapogee }}
                 </a>
@@ -45,7 +45,7 @@
             </td>
             <td>{% if inscritmat.statut == "AJ" %}
                 <a class="btn btn-success"
-                    href="{% url 'jury:decisionmat' inscritmat.etudiant.id  inscritmat.matiere.id %}"
+                    href="{% url 'jury:decisionmat' inscritmat.inscriptiondiplome.etudiant.id  inscritmat.matiere.id %}"
                     role="button">ADJ</a>
                 {% endif %}
             </td>

@@ -33,7 +33,7 @@
                                 <h4>{{ templateData.insdiplome.statutS1 }} </h4>
                             </th>
                             <th>
-                                <h4>{{ templateData.insdiplome.rangSem1 }}</h4>
+                                <h4>{{ templateData.insdiplome.rangSem1 }}/{{ templateData.nbreetudiants }}</h4>
                             </th>
                         </tr>
                         {% if templateData.S2 %}
@@ -48,7 +48,7 @@
                                 <h4>{{ templateData.insdiplome.statutS2 }} </h4>
                             </th>
                             <th>
-                                <h4>{{ templateData.insdiplome.rangSem2 }}</h4>
+                                <h4>{{ templateData.insdiplome.rangSem2 }}/{{ templateData.nbreetudiants }} </h4>
                             </th>
                         </tr>
                         <tr>
@@ -99,7 +99,7 @@
                             <th scope="row">
                                 {% if perms.gestiondejury.change_etudiant %}
                                 <a class="btn btn-success btn-sm"
-                                    href="{% url 'matiere:editnotes' inscritmat.matiere.codeapogee inscritmat.etudiant.id %}"
+                                    href="{% url 'matiere:editnotes' inscritmat.matiere.codeapogee inscritmat.inscriptiondiplome.etudiant.id %}"
                                     role="button">
                                     {{ inscritmat.matiere.codeapogee }}</a>
                                 {% else %}

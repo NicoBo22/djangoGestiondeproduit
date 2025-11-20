@@ -68,7 +68,7 @@ def calculSem(etudiant,sem) :
     nbMat = 0
     listemat = Matiere.objects.filter(semestre=sem)
     for mat in listemat:
-        listeins=Inscriptionmat.objects.filter(etudiant=etudiant,matiere=mat).order_by("matiere_id","-anneeuniv")
+        listeins=Inscriptionmat.objects.filter(inscriptiondiplome__etudiant=etudiant,matiere=mat).order_by("matiere_id","-inscriptiondiplome__anneeuniv")
         if len(listeins)>0:
             if listeins[0].moyenne is not None:
                 somme+=listeins[0].moyenne

@@ -1,8 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
+
 import pandas as pd
 from .forms import UploadFileForm
 from django.contrib.auth.decorators import login_required,permission_required
 from io import BytesIO
+from etudiant.models import Inscriptiondiplome
 
 
 
@@ -28,3 +30,43 @@ def upload_excel(request):
 
 
 # Create your views here.
+@login_required
+@permission_required('gestiondejury.change_etudiant', raise_exception = True)
+def upload_excelinsdiplome(request):
+    data = None
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            uploaded_file = request.FILES['file']
+
+            # Lire le fichier Excel directement en mémoire
+            file_in_memory = BytesIO(uploaded_file.read())
+            df = pd.read_excel(file_in_memory)
+
+            for row in df.itertuples(index=True):
+
+                inscriptiondipl = Inscriptiondiplome.objects.filter(etudiant__numero=row.Num).first()
+                if inscriptiondipl is None:
+                    print(row.nom, " : ",row.prenom)
+                else:
+
+                    if row.alternant =='x':
+                        inscriptiondipl.alternant=True
+                    if row.neu == 'x':
+                        inscriptiondipl.neu = True
+                    if row.iaL2 == 'x':
+                        inscriptiondipl.iaL2 = True
+                    if row.redoublant == 'x':
+                        inscriptiondipl.redoublant = True
+                    inscriptiondipl.save()
+                
+                
+            return redirect('etudiant:index')
+
+
+            # Convertir les données en dictionnaire pour le template
+            
+    else:
+        form = UploadFileForm()
+
+    return render(request, 'tableurxl/upload_excel.html', {'form': form, 'data': data})

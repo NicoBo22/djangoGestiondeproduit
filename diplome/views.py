@@ -10,7 +10,7 @@ def indexannee(request):
         if form.is_valid():
             annee = form.cleaned_data['annee']
             
-            request.session['anneesession']=annee.id
+            request.session['anneesession']=annee.anneeuniv
             messages.success(request,"L'année choisie : "+annee.anneeuniv )
             
             return redirect('etudiant:index')

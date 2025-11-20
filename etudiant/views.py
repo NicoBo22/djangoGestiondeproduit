@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required,permission_required
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from .models import Inscriptionmat,Inscriptiondiplome,Etudiant
 from diplome.models import Anneeuniv
 from matiere.models import Matiere
@@ -10,8 +10,9 @@ from django.core.exceptions import ObjectDoesNotExist
 
 @login_required
 def indexetudiant(request):
-    idanneeunivsession = request.session.get('anneesession')
-    anneeuniv=Anneeuniv.objects.get(id=idanneeunivsession)
+    anneeunivsession = request.session.get('anneesession')
+
+    anneeuniv =get_object_or_404(Anneeuniv,anneeuniv=anneeunivsession)  
     templateData = {}
     templateData ['titre']= "Etudiants"
     ListeInscritDiplome = Inscriptiondiplome.objects.filter(anneeuniv=anneeuniv).order_by('etudiant__nom','etudiant__prenom')
@@ -58,7 +59,7 @@ def addinscriptiondipl(request):
 @login_required
 def addinscriptionmat(request,id):
     etudiant = Etudiant.objects.get(id=id)
-    anneeunivencours = Anneeuniv.objects.get(encours = True)
+    anneeunivinscrit = Anneeuniv.objects.get(anneeuniv=request.session.get('anneesession')) 
     
 
     if request.method == "POST":
@@ -81,7 +82,8 @@ def addinscriptionmat(request,id):
         form = MatiereSelectionForm()
     templateData = {}
     templateData ['titre']= "Inscription matières " + etudiant.nom +" "+etudiant.prenom
-    templateData ['etudiant']= etudiant  
+    templateData ['etudiant']= etudiant 
+    templateData ['annee']= anneeunivinscrit
     return render(request, "etudiant/inscriptionmat.html", {'form': form, 'templatedata':templateData})
 
 
@@ -98,8 +100,13 @@ def listeetudiant(request,alt):
         ListeInscritDiplome = ListeInscritDiplome.filter(alternant=True).order_by('etudiant__nom','etudiant__prenom')
     elif alt == 'neu':
         ListeInscritDiplome = ListeInscritDiplome.filter(neu=True).order_by('etudiant__nom','etudiant__prenom')
-    else:
+
+    elif alt == 'nonalt':
         ListeInscritDiplome = ListeInscritDiplome.filter(alternant=False).order_by('etudiant__nom','etudiant__prenom')
+        
+    elif alt == 'redoubl':
+        ListeInscritDiplome = ListeInscritDiplome.filter(redoublant=True).order_by('etudiant__nom','etudiant__prenom')
+
 
     
     templateData ['inscritdiplome']= ListeInscritDiplome
@@ -116,10 +123,19 @@ def vueetudiant(request, id):
     listeinsdiplome =listeinsdiplome.order_by('anneeuniv__datedebut')
     try:
         inscridipl = listeinsdiplome.get(etudiant=etudiant,anneeuniv=anneeunivencours)
+
     except (ObjectDoesNotExist, ValueError, TypeError):
-        inscridipl= None 
-    
-    ListeInscritmat =Inscriptionmat.objects.filter(etudiant=etudiant )
+        inscridipl= None
+    if inscridipl is not None:
+        if inscridipl.alternant :
+            nbreetudiants = Inscriptiondiplome.objects.filter(anneeuniv=anneeunivencours,alternant = True).count()
+        else :
+            nbreetudiants = Inscriptiondiplome.objects.filter(anneeuniv=anneeunivencours,alternant = False).count()
+
+
+        
+   
+    ListeInscritmat =Inscriptionmat.objects.filter(inscriptiondiplome__etudiant=etudiant )
     if(not(anneeunivencours.S2)):
         ListeInscritmat = ListeInscritmat.filter(matiere__semestre ="S5")
     ListeInscritmat = ListeInscritmat.order_by('matiere__semestre')
@@ -130,7 +146,9 @@ def vueetudiant(request, id):
     templateData ['listeinscritmat']=ListeInscritmat
     templateData ['insdiplome']=inscridipl
     templateData ['listeinsdiplome']=listeinsdiplome
-    templateData['S2']=anneeunivencours.S2
+    templateData['S2']=anneeunivencours.S2 
+
+    templateData['nbreetudiants'] = nbreetudiants
     return render (request,'etudiant/vueetudiant.html'
                   ,{'templateData': templateData} )   
 

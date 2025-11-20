@@ -79,9 +79,9 @@ class Inscriptionmat(models.Model):
         Ajourne = 'AJ'
         SansResultat ='Sresul'
     
-    etudiant = models.ForeignKey(Etudiant,on_delete=models.CASCADE, related_name="etudiants",related_query_name='etud')
+    inscriptiondiplome = models.ForeignKey(Inscriptiondiplome,on_delete=models.CASCADE, null=True,)
     matiere = models.ForeignKey(Matiere,on_delete=models.CASCADE, related_name="matieres",related_query_name='mat')
-    anneeuniv=models.ForeignKey(Anneeuniv,on_delete=models.CASCADE)
+
     notecc1=models.FloatField(null=True)
     notecc2=models.FloatField(null=True)
     notecc3=models.FloatField(null=True)

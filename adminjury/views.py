@@ -20,11 +20,11 @@ def inscription(request):
 def calculMoyenneMat(request,idmat,alt):
     anneunivencours = Anneeuniv.objects.get(encours = True)
     if alt == "alt":
-        listeInscrimat =Inscriptionmat.objects.filter(anneeuniv=anneunivencours,matiere=idmat,etudiant__alternant=True)
+        listeInscrimat =Inscriptionmat.objects.filter(inscriptiondiplome__anneeuniv=anneunivencours,matiere=idmat,inscriptiondiplome__alternant=True)
 
     else:
 
-        listeInscrimat =Inscriptionmat.objects.filter(anneeuniv=anneunivencours,matiere=idmat,etudiant__alternant=False)
+        listeInscrimat =Inscriptionmat.objects.filter(inscriptiondiplome__anneeuniv=anneunivencours,matiere=idmat,inscriptiondiplome__alternant=False)
 
     for inscrimat in listeInscrimat:
         inscrimat.moyenne = moyenneMat(inscrimat)
@@ -49,12 +49,14 @@ def calculMoyenneSemestre(request,sem,alt):
     for matiere in listematieres:
 
         if alt == "alt":
-            listeInscrimat =Inscriptionmat.objects.filter(anneeuniv=anneunivencours,etudiant__alternant=True,matiere = matiere)
+            listeInscrimat =Inscriptionmat.objects.filter(inscriptiondiplome__anneeuniv=anneunivencours,
+                                                          inscriptiondiplome__alternant=True,matiere=matiere)            
 
 
         else:
 
-            listeInscrimat =Inscriptionmat.objects.filter(anneeuniv=anneunivencours,etudiant__alternant=False,matiere=matiere)
+            listeInscrimat =Inscriptionmat.objects.filter(inscriptiondiplome__anneeuniv=anneunivencours,
+                                                          inscriptiondiplome__alternant=False,matiere=matiere)
 
         for inscrimat in listeInscrimat:
             inscrimat.moyenne = moyenneMat(inscrimat)
@@ -77,9 +79,9 @@ def calculSemestre(request,sem,alt):
     anneunivencours = Anneeuniv.objects.get(encours = True)
     listeInscritDiplomeSem = Inscriptiondiplome.objects.filter(anneeuniv=anneunivencours)
     if alt == "alt":
-        listeInscritDiplomeSem=listeInscritDiplomeSem.filter(etudiant__alternant=True)
+        listeInscritDiplomeSem=listeInscritDiplomeSem.filter(alternant=True)
     elif alt == "nonalt":
-        listeInscritDiplomeSem=listeInscritDiplomeSem.filter(etudiant__alternant=False)
+        listeInscritDiplomeSem=listeInscritDiplomeSem.filter(alternant=False)
     for inscridiplome in listeInscritDiplomeSem:
         if sem == 'S5':
             etud = inscridiplome.etudiant
@@ -110,5 +112,9 @@ def calculSemestre(request,sem,alt):
 
 
 
-    
+@login_required
+@permission_required('etudiant.change_etudiant', raise_exception=True)
+def calculAnnee(request,codeDipl,alt):
+    return redirect('etudiant:index')    
+
     

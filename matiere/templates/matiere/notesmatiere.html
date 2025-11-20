@@ -27,8 +27,8 @@
                 {% for inscrimat in templateData.listeinscritmat %}
                 <tr>
                     <th scope="row">{{ inscrimat.rang }}</th>
-                    <td>{{ inscrimat.etudiant.nom }}</td>
-                    <td>{{ inscrimat.etudiant.prenom }}</td>
+                    <td>{{ inscrimat.inscriptiondiplome.etudiant.nom }}</td>
+                    <td>{{ inscrimat.inscriptiondiplome.etudiant.prenom }}</td>
                     <td class="fw-bold">{{ inscrimat.moyenne|floatformat:2 }}</td>
                     <td>{{inscrimat.notecc1|floatformat:2 }}</td>
                     <td>{{inscrimat.notecc2|floatformat:2 }}</td>

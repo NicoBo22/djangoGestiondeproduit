@@ -34,7 +34,7 @@ def juryS5(request,rang):
 
     listeinsdiplomeetu = Inscriptiondiplome.objects.filter(etudiant=etudiant)
     listeinsdiplomeetu =listeinsdiplomeetu.order_by('anneeuniv__datedebut')
-    ListeInscritmat =Inscriptionmat.objects.filter(etudiant=etudiant,matiere__semestre ="S5" )
+    ListeInscritmat =Inscriptionmat.objects.filter(inscriptiondiplome__etudiant=etudiant,matiere__semestre ="S5" )
     
     templateData = {}
     templateData ['titre']= "Jury S5 : " +anneeuniv.anneeuniv
@@ -53,7 +53,7 @@ def juryS5(request,rang):
 @permission_required('gestiondejury.change_etudiant', raise_exception = True)
 def decisionmat(request,etud,mat):
     anneeencours = Anneeuniv.objects.get(encours =True)
-    insmatetu = get_object_or_404(Inscriptionmat, etudiant = etud,matiere = mat,anneeuniv = anneeencours)
+    insmatetu = get_object_or_404(Inscriptionmat, inscriptiondiplome__etudiant = etud,matiere = mat,inscriptiondiplome__anneeuniv = anneeencours)
     insmatetu.statut = "ADJ"
     insmatetu.decisionmat = datetime.datetime.now()
     insmatetu.save()
