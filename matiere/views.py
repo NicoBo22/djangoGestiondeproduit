@@ -45,7 +45,7 @@ def editnotes(request,code,etudiant):
     anneeunivencours = Anneeuniv.objects.get(encours = True)
     etudiant= Etudiant.objects.get(id=etudiant)
     inscritmat = get_object_or_404(Inscriptionmat, inscriptiondiplome__etudiant = etudiant,matiere = matiere,inscriptiondiplome__anneeuniv = anneeunivencours)
-    inscridipl = Inscriptiondiplome.objects.get(etudiant=etudiant,anneeuniv=anneeunivencours)
+   # inscridipl = Inscriptiondiplome.objects.get(etudiant=etudiant,anneeuniv=anneeunivencours)
     if request.method == 'POST':
         notesCCform = CCForm(request.POST)
 
@@ -104,7 +104,7 @@ def editnotesmatiere(request,code,alt,etudiantalpha):
          ListeInscritmat =  ListeInscritmat.filter(inscriptiondiplome__alternant=True).order_by('inscriptiondiplome__etudiant__nom','inscriptiondiplome__etudiant__prenom')
 
     else:
-         ListeInscritmat =  ListeInscritmat.filter(inscriptiondiplome____alternant=False).order_by('inscriptiondiplome__etudiant__nom','inscriptiondiplome__etudiant__prenom')
+         ListeInscritmat =  ListeInscritmat.filter(inscriptiondiplome__alternant=False).order_by('inscriptiondiplome__etudiant__nom','inscriptiondiplome__etudiant__prenom')
 
     inscritmat =  ListeInscritmat[etudiantalpha-1]
     if request.method == 'POST':
@@ -119,7 +119,7 @@ def editnotesmatiere(request,code,alt,etudiantalpha):
             inscritmat.notecc1 = cc1
             inscritmat.notecc2 = cc2
             inscritmat.notecc3 = cc3
-            
+            inscritmat.moyenne=moyenneMat(inscritmat)
             inscritmat.save()
             messages.success(request, "Notes de "+str(matiere.nom)+" "+str(inscritmat.inscriptiondiplome.etudiant.nom) +
                               " "+str(inscritmat.inscriptiondiplome.etudiant.prenom)+ " changées")
@@ -134,9 +134,25 @@ def editnotesmatiere(request,code,alt,etudiantalpha):
     templateData ['matiere']= matiere  
     templateData ['etudiant']= inscritmat.inscriptiondiplome.etudiant
     templateData ['rangalpha']= etudiantalpha
+    templateData['alternant']=inscritmat.inscriptiondiplome.alternant
     
     return render (request,'matiere/editnotesmatiere.html'
                   ,{'templateData': templateData,'notesCCform':notesCCform} ) 
+
+@login_required
+@permission_required('gestiondejury.change_etudiant', raise_exception = True)
+def listematexcel(request,sem):
+    templateData = {}
+    templateData ['titre']= "Liste Matiere Excel"
+    ListeMatiere = Matiere.objects.filter(semestre=sem)
+
+    templateData ['matiere']= ListeMatiere
+
+
+    return render (request,'matiere/listematiereexcel.html'
+                  ,{'templateData': templateData} )
+
+
 
 
 

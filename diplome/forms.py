@@ -2,6 +2,7 @@ from django import forms
 from .models import Anneeuniv
 
 
+
 class AnneeForm(forms.Form):
 
     
@@ -10,4 +11,18 @@ class AnneeForm(forms.Form):
         queryset=Anneeuniv.objects.all(),
         label="Choisir une catégorie",
         empty_label="-- Sélectionnez --"  # option par défaut
+    )
+
+
+class Semestre2Form(forms.Form):
+
+
+    validerS2 = forms.BooleanField(
+        label="Validation du second semestre",
+        required=False
+    )
+
+class CreationAnneeForm(forms.Form):
+        date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date'})
     )

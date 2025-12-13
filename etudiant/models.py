@@ -86,9 +86,10 @@ class Inscriptionmat(models.Model):
     notecc2=models.FloatField(null=True)
     notecc3=models.FloatField(null=True)
     moyenne=models.FloatField(null=True)
+    pointjury=models.FloatField(null=True)
     statut = models.CharField(null = True,choices=Statut.choices, max_length=6)
     decisionmat = models.DateTimeField(null=True)
     rang=models.IntegerField(null=True)
 
     def __str__(self):
-        return self.anneeuniv.anneeuniv + ' : ' +self.etudiant.nom +' '+self.matiere.nom
+        return self.inscriptiondiplome.anneeuniv.anneeuniv + ' : ' +self.inscriptiondiplome.etudiant.nom +' '+self.matiere.nom

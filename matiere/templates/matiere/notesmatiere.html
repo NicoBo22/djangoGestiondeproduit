@@ -6,6 +6,19 @@
         <div class="row mt-3">
             <div class="col mx-auto mb-3">
                 <h2> {{ templateData.matiere.codeapogee }} : {{ templateData.matiere.nom }}</h2>
+                {% if perms.gdjury.add_matiere %}
+
+                <a href="{% url 'matiere:editnotesmatiere' templateData.matiere.codeapogee 'alt'  1  %}"
+                    class="btn bg-success text-white">
+                    Entrez notes alternants {{ templateData.matiere.codeapogee }}
+                </a>
+                <a href="{% url 'matiere:editnotesmatiere' templateData.matiere.codeapogee 'nonalt' 1  %}"
+                    class="btn bg-success text-white">
+                    Entrez notes non alternants {{ templateData.matiere.codeapogee }}
+                </a>
+
+                {% endif %}
+
                 <hr />
             </div>
         </div>

@@ -18,6 +18,41 @@ def jury(request):
     return render (request,'jury/listejurys.html'
                   ,{'templateData': templateData} )
 
+
+@login_required
+def jurydiplome(request,rang):
+    anneeuniv = Anneeuniv.objects.get(encours = True)
+    alt = request.GET.get('alt','false').lower()=='true'
+    codeAPOGEE = request.GET.get('codeAPOGEE',"K3MKGE")
+    diplomejury = Diplome.objects.get(codeapogee= codeAPOGEE)
+    listeInscriptionDiplome =Inscriptiondiplome.objects.filter(diplome=diplomejury,
+                                                      anneeuniv=anneeuniv,
+                                                      alternant = alt)
+    nbreetudiants = len( listeInscriptionDiplome)
+    listeInscriptionDiplome=listeInscriptionDiplome.order_by("-noteAnnee")   
+    etudiant =listeInscriptionDiplome[rang-1].etudiant
+    inscridipl = listeInscriptionDiplome.get(etudiant=etudiant,anneeuniv=anneeuniv)
+
+    listeinsdiplomeetu = Inscriptiondiplome.objects.filter(etudiant=etudiant)
+    listeinsdiplomeetu =listeinsdiplomeetu.order_by('anneeuniv__datedebut')
+    ListeInscritmatS6 =Inscriptionmat.objects.filter(inscriptiondiplome__etudiant=etudiant,matiere__semestre ="S6" )
+    ListeInscritmatS5 =Inscriptionmat.objects.filter(inscriptiondiplome__etudiant=etudiant,matiere__semestre ="S5" )
+    
+    templateData = {}
+    templateData ['titre']= "Jury diplome : " +anneeuniv.anneeuniv
+    templateData ['annee']=anneeuniv
+    templateData ['diplome']=diplomejury
+    templateData ['etudiant']=etudiant
+    templateData ['listeinsdiplome']=listeinsdiplomeetu
+    templateData ['listeinscritmatS5']=ListeInscritmatS5
+    templateData ['listeinscritmatS6']=ListeInscritmatS6
+    templateData ['insdiplome']=inscridipl   
+    templateData ['nbreetudiants']=nbreetudiants 
+    templateData ['juryS5']=False
+
+    return render (request,'jury/jurydiplomeetudiant.html'
+                  ,{'templateData': templateData} )
+
 @login_required
 def juryS5(request,rang):
     anneeuniv = Anneeuniv.objects.get(encours = True)
@@ -42,9 +77,10 @@ def juryS5(request,rang):
     templateData ['diplome']=diplomejury
     templateData ['etudiant']=etudiant
     templateData ['listeinsdiplome']=listeinsdiplomeetu
-    templateData ['listeinscritmat']=ListeInscritmat
+    templateData ['listeinscritmatS5']=ListeInscritmat
     templateData ['insdiplome']=inscridipl   
     templateData ['nbreetudiants']=nbreetudiants 
+    templateData ['juryS5']=True
     return render (request,'jury/juryS5etudiant.html'
                   ,{'templateData': templateData} )
 
@@ -58,15 +94,26 @@ def decisionmat(request,etud,mat):
     insmatetu.decisionmat = datetime.datetime.now()
     insmatetu.save()
     insDiplome = get_object_or_404(Inscriptiondiplome, etudiant = etud,anneeuniv = anneeencours)
-    rang = insDiplome.rangSem1
+   
     messages.success(request, "ADJ effectué" )
     if  insDiplome.alternant:
+        if anneeencours.S2:
+            rang = insDiplome.rangAnnee
+            base_url = reverse('jury:juryDiplome',kwargs={'rang': rang})
+        else:
+            rang = insDiplome.rangSem1
+            base_url = reverse('jury:juryS5',kwargs={'rang': rang})
         base_url = reverse('jury:juryS5',kwargs={'rang': rang})
         query_string =urlencode({'alt':'true'})
         url = f'{base_url}?{query_string}'
         return redirect(url) 
 
-    return redirect('jury:juryS5', rang = rang)
+    if anneeencours.S2:
+        rang = insDiplome.rangAnnee
+        return redirect('jury:juryDiplome', rang = rang)
+    else:
+        rang = insDiplome.rangSem1
+        return redirect('jury:juryS5', rang = rang)
 
 @login_required
 @permission_required('gestiondejury.change_etudiant', raise_exception = True)
@@ -76,17 +123,68 @@ def decisionS5(request,etud):
     insS5etu.statutS1 = 'ADJ'
     insS5etu.datedecisionS1=datetime.datetime.now()
     insS5etu.save()
-    rang = insS5etu.rangSem1
+    
     messages.success(request, "ADJ S5 effectué" )
     insDiplome = get_object_or_404(Inscriptiondiplome, etudiant = etud,anneeuniv = anneeencours)
 
     if insDiplome.alternant:
-        base_url = reverse('jury:juryS5',kwargs={'rang': rang})
+        if anneeencours.S2:
+            rang = insS5etu.rangAnnee
+            base_url = reverse('jury:juryDiplome',kwargs={'rang': rang})
+        else:
+            rang = insS5etu.rangSem1
+            base_url = reverse('jury:juryS5',kwargs={'rang': rang})
+        query_string =urlencode({'alt':'true'})
+        url = f'{base_url}?{query_string}'
+        return redirect(url)
+     
+    if anneeencours.S2: 
+        rang = insS5etu.rangAnnee
+
+        return redirect('jury:juryDiplome', rang = rang)
+    else:
+        rang = insS5etu.rangSem1
+        return redirect('jury:juryS5', rang = rang)
+
+@login_required
+@permission_required('gestiondejury.change_etudiant', raise_exception = True)
+def decisionS6(request,etud):
+    anneeencours = Anneeuniv.objects.get(encours =True)
+    insS6etu = get_object_or_404(Inscriptiondiplome, etudiant = etud,anneeuniv = anneeencours)
+    insS6etu.statutS2 = 'ADJ'
+    insS6etu.datedecisionS2=datetime.datetime.now()
+    insS6etu.save()
+    rang = insS6etu.rangAnnee
+    messages.success(request, "ADJ S6 effectué" )
+    insDiplome = get_object_or_404(Inscriptiondiplome, etudiant = etud,anneeuniv = anneeencours)
+
+    if insDiplome.alternant:
+        base_url = reverse('jury:juryS6',kwargs={'rang': rang})
         query_string =urlencode({'alt':'true'})
         url = f'{base_url}?{query_string}'
         return redirect(url) 
 
-    return redirect('jury:juryS5', rang = rang)
+    return redirect('jury:juryDiplome', rang = rang)
+
+@login_required
+@permission_required('gestiondejury.change_etudiant', raise_exception = True)
+def decisiondiplome(request,etud):
+    anneeencours = Anneeuniv.objects.get(encours =True)
+    insetu = get_object_or_404(Inscriptiondiplome, etudiant = etud,anneeuniv = anneeencours)
+    insetu.statutDipl = 'ADJ'
+    insetu.datedecisionDipl=datetime.datetime.now()
+    insetu.save()
+    rang = insetu.rangAnnee
+    messages.success(request, "ADJ diplome effectué" )
+    insDiplome = get_object_or_404(Inscriptiondiplome, etudiant = etud,anneeuniv = anneeencours)
+
+    if insDiplome.alternant:
+        base_url = reverse('jury:juryS6',kwargs={'rang': rang})
+        query_string =urlencode({'alt':'true'})
+        url = f'{base_url}?{query_string}'
+        return redirect(url) 
+
+    return redirect('jury:juryDiplome', rang = rang)
 
 
 @login_required

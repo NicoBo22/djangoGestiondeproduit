@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required,permission_required
+from django.contrib import messages
 from django.shortcuts import render,redirect,get_object_or_404
 from .models import Inscriptionmat,Inscriptiondiplome,Etudiant
-from diplome.models import Anneeuniv
+from diplome.models import Anneeuniv,Diplome
 from matiere.models import Matiere
 from .forms import EtudiantForm,InscriptiondiplForm,MatiereSelectionForm
 from django.core.exceptions import ObjectDoesNotExist
@@ -60,31 +61,44 @@ def addinscriptiondipl(request):
 def addinscriptionmat(request,id):
     etudiant = Etudiant.objects.get(id=id)
     anneeunivinscrit = Anneeuniv.objects.get(anneeuniv=request.session.get('anneesession')) 
-    
+    diplome = Diplome.objects.get(id=1)
+    existe =Inscriptiondiplome.objects.filter(etudiant=etudiant,anneeuniv=anneeunivinscrit,diplome=diplome).exists()
+    if existe:
+        if request.method == "POST":
+            form = MatiereSelectionForm(request.POST)
+            if form.is_valid():
+                inscriptiondipl = Inscriptiondiplome.objects.get(etudiant=etudiant,anneeuniv=anneeunivinscrit,diplome=diplome)
 
-    if request.method == "POST":
-        form = MatiereSelectionForm(request.POST)
-        if form.is_valid():
-            matieres_selectionnees = form.cleaned_data['matieres']
-            listematiere =Matiere.objects.all()
-            for matiere in listematiere:
-                inscriptionmatiere=Inscriptionmat.objects.filter(anneeuniv=anneeunivencours,etudiant=etudiant,matiere=matiere)
-                if (not inscriptionmatiere.exists()) and (matiere in matieres_selectionnees):
-                    inscriptionmatiere = Inscriptionmat(anneeuniv=anneeunivencours,etudiant=etudiant,matiere=matiere)
-                    inscriptionmatiere.save()
-                elif inscriptionmatiere.exists() and not (matiere in matieres_selectionnees):
-                    inscriptionmatiere.delete()
-            return redirect('etudiant:vue',id=etudiant.id)
-                    
+                matieres_selectionnees = form.cleaned_data['matieres']
+            
+                listematiere =Matiere.objects.all()
+                for matiere in listematiere:
+
+                    existeInscrMat=Inscriptionmat.objects.filter(inscriptiondiplome=inscriptiondipl,matiere=matiere).exists()
+
+                    if (not existeInscrMat) and (matiere in matieres_selectionnees):
+                        print(matiere.nom)
+                        inscriptionmatiere = Inscriptionmat(inscriptiondiplome=inscriptiondipl,matiere=matiere)
+                        inscriptionmatiere.save()
+                    elif existeInscrMat and not (matiere in matieres_selectionnees):
+                        inscriptionmatiere=Inscriptionmat.objects.filter(inscriptiondiplome=inscriptiondipl,matiere=matiere)
+                        inscriptionmatiere.delete()
+                return redirect('etudiant:vue',id=etudiant.id)
+                        
 
 
+        else:
+            form = MatiereSelectionForm()
+        templateData = {}
+        templateData ['titre']= "Inscription matières " + etudiant.nom +" "+etudiant.prenom
+        templateData ['etudiant']= etudiant 
+        templateData ['annee']= anneeunivinscrit
+        return render(request, "etudiant/inscriptionmat.html", {'form': form, 'templatedata':templateData})
     else:
-        form = MatiereSelectionForm()
-    templateData = {}
-    templateData ['titre']= "Inscription matières " + etudiant.nom +" "+etudiant.prenom
-    templateData ['etudiant']= etudiant 
-    templateData ['annee']= anneeunivinscrit
-    return render(request, "etudiant/inscriptionmat.html", {'form': form, 'templatedata':templateData})
+        message = "Etudiant "+etudiant.nom+" "+etudiant.prenom+" n'est pas inscrit en "+anneeunivinscrit.anneeuniv
+        messages.warning(request,message)
+        return redirect('etudiant:index')
+
 
 
 
@@ -152,6 +166,18 @@ def vueetudiant(request, id):
     return render (request,'etudiant/vueetudiant.html'
                   ,{'templateData': templateData} )   
 
+@permission_required('etudiant.change_etudiant', raise_exception=True)
+@login_required
+def indexetudiantadmin(request):
+    anneeunivsession = request.session.get('anneesession')
+    anneeuniv =get_object_or_404(Anneeuniv,anneeuniv=anneeunivsession)  
+    templateData = {}
+    templateData ['titre']= "Etudiants"
+    ListeInscritDiplome = Inscriptiondiplome.objects.filter(anneeuniv=anneeuniv).order_by('etudiant__nom','etudiant__prenom')
+    templateData ['inscritdiplome']= ListeInscritDiplome
+    templateData['anneeuniv'] = anneeuniv
+    return render (request,'etudiant/listeetudiantadmin.html'
+                  ,{'templateData': templateData} )
 
 
 

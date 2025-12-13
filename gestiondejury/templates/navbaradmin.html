@@ -2,6 +2,15 @@
     <div class="container">
 
 
+        <ul class="navbar-nav">
+            <li class="nav-item active">
+                <a href="{% url 'matiere:listematexcel' sem='S5' %}" class="btn btn-secondary btn-lg active"
+                    role="button" aria-pressed="true">Notes excel S5</a>
+            </li>
+
+        </ul>
+
+
         <div class="btn-group dropup">
             <button type="button" class="btn btn-secondary">
                 Jury admin S5
@@ -35,8 +44,17 @@
                 <span class="visually-hidden">menu admin 2</span>
             </button>
             <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="#">Jury S6 Non Alternants</a></li>
-                <li><a class="dropdown-item" href="#">Jury S6 Alternants</a></li>
+                <li><a class="dropdown-item"
+                        href="{% url 'adminjury:calculmoyennesemestre' sem='S6' alt='nonalt'  %}">Calcul moyenne
+                        matières
+                        S6 Non Alternants</a></li>
+                <li><a class="dropdown-item" href="{% url 'adminjury:calculsemestre' sem='S6' alt='nonalt'  %}">Calcul
+                        moyenne S6 Non Alternants</a></li>
+                <li><a class="dropdown-item"
+                        href="{% url 'adminjury:calculmoyennesemestre' sem='S6' alt='alt'  %}">Calcul moyenne matières
+                        S6 Alternants</a></li>
+                <li><a class="dropdown-item" href="{% url 'adminjury:calculsemestre' sem='S6' alt='alt'  %}">Calcul
+                        moyenne S6 Alternants</a></li>
             </ul>
         </div>
         <div class="btn-group dropup">
@@ -51,6 +69,8 @@
             <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="{% url 'etudiant:addetudiant' %}">Nouvel étudiant</a></li>
                 <li><a class="dropdown-item" href=" {% url 'etudiant:addinscriptiondipl' %} ">Inscription diplome</a>
+                <li><a class="dropdown-item" href=" {% url 'etudiant:indexetudiantadmin' %} ">Liste etudiant pour
+                        insciption matières</a>
                 </li>
             </ul>
         </div>

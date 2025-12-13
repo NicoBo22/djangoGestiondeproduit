@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block content %}
+{% load static %}
+<div class="p-3">
+    <div class="container">
+        <div class="row mt-3">
+            <div class="col mx-auto mb-3">
+                <h2>Inscription matières : {{ templateData.anneeuniv }}</h2>
+                <hr />
+            </div>
+        </div>
+        <div class="row">
+            {% for inscription in templateData.inscritdiplome %}
+            <div class="col-md-4 col-lg-3 mb-2">
+                <div class="p-2 card align-items-center pt-4">
+
+                    <img src="{{ inscription.etudiant.photo.url }}" class="card-img-top rounded img-card-200">
+
+                    <div class="car.d-body text-center">
+                        {% if inscription.alternant %}
+                        <a href="{% url 'etudiant:addinscriptionmat' id=inscription.etudiant.id %}"
+                            class="btn bg-info text-white">
+                            {{ inscription.etudiant.genre }} {{ inscription.etudiant.nom }}
+                            {{ inscription.etudiant.prenom }} <br>{{ inscription.etudiant.numero }}
+                        </a>
+                        {% elif inscription.neu %}
+                        <a href="{% url 'etudiant:addinscriptionmat' id=inscription.etudiant.id %}"
+                            class="btn bg-warning text-white">
+                            {{ inscription.etudiant.genre }} {{ inscription.etudiant.nom }}
+                            {{ inscription.etudiant.prenom }} <br>{{ inscription.etudiant.numero }}
+                        </a>
+                        {% else %}
+                        <a href="{% url 'etudiant:addinscriptionmat' id=inscription.etudiant.id %}"
+                            class="btn bg-primary text-white">
+                            {{ inscription.etudiant.genre }} {{ inscription.etudiant.nom }}
+                            {{ inscription.etudiant.prenom }} <br>{{ inscription.etudiant.numero }}
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

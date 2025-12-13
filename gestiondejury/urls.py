@@ -29,6 +29,7 @@ urlpatterns = [
     path('jury/', include('jury.urls')),
     path('excel/',include('tableurxl.urls')),
     path('diplome/',include('diplome.urls')),
+    path('docpdf/',include('docpdf.urls')),
 
 ]
 urlpatterns += static(settings.MEDIA_URL,

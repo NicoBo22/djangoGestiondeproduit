@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'adminjury',
     'jury',
     'tableurxl',
+    'docpdf',
 ]
 
 MIDDLEWARE = [
@@ -156,3 +157,7 @@ MEDIA_URL = '/media/'
 # Durée de vie d’une session en secondes
 SESSION_COOKIE_AGE = 2000
 SESSION_SAVE_EVERY_REQUEST = True
+#plug in creatin de docPDF
+PDFKIT_CONFIG = {
+    'wkhtmltopdf': r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"
+}

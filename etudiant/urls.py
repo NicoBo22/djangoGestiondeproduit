@@ -7,6 +7,7 @@ urlpatterns = [
     path('<int:id>/', views.vueetudiant, name='vue'),
     path('add/', views.addetudiant, name ='addetudiant'),
     path('inscriptiondiplome/', views.addinscriptiondipl, name ='addinscriptiondipl'),
-    path('inscriptionmat/<int:id>/', views.addinscriptionmat, name ='addinscriptionmat')
+    path('inscriptionmat/<int:id>/', views.addinscriptionmat, name ='addinscriptionmat'),
+    path('admin',views.indexetudiantadmin, name="indexetudiantadmin"),
 
 ] 

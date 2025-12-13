@@ -45,5 +45,12 @@
         <h4>Avis de poursuite d'étude</h4>
 
         {{ templateData.insdiplome.get_avispoursuite_display }}
+
+        {% if perms.gdjury.add_etudiant and templateData.juryS5 %}
+        <a href="{% url 'docpdf:avispoursuite' templateData.etudiant.id %}" class="btn btn-primary btn-lg" role="button"
+            target="_blank">Document Avis</a>
+
+        {% endif %}
+
     </div>
 </div>

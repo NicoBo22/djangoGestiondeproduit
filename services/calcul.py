@@ -89,3 +89,19 @@ def calculSem(etudiant,sem) :
 
     return [moyennesemestre ,statut] 
 
+def calculrangannee(liste):
+    listeInscrit= liste.exclude(noteAnnee__isnull = True)
+    listeInscrit=listeInscrit.order_by('-noteAnnee')
+    rang = 1
+    nb = 1
+    for i,inscritdipl in enumerate(listeInscrit):
+
+        if i>0:
+            if(inscritdipl.noteAnnee != listeInscrit[i-1].noteAnnee):
+                rang = rang + nb
+                nb = 1
+            else:
+                nb = nb+1
+        inscritdipl.rangAnnee = rang
+        inscritdipl.save()    
+

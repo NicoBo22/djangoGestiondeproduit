@@ -65,10 +65,10 @@
                                 <h4>{{ templateData.insdiplome.rangAnnee }}</h4>
                             </th>
                         </tr>
-                        {% endif %}
+
                     </tbody>
                 </table>
-
+                <h3>Semestre 6</h3>
                 <table class="table">
                     <thead>
                         <tr>
@@ -87,6 +87,7 @@
                     <tbody>
 
                         {% for inscritmat in templateData.listeinscritmat %}
+                        {% if inscritmat.matiere.semestre == 'S6' %}
                         {% if inscritmat.moyenne is None %}
                         <tr>
                             {% elif inscritmat.moyenne >= 10 %}
@@ -119,8 +120,69 @@
                             <td>{{ inscritmat.statut }}</td>
                             <td>{{ inscritmat.rang }}</td>
 
-                            <td>{{ inscritmat.anneeuniv.anneeuniv }}</td>
+                            <td>{{ inscritmat.inscriptiondiplome.anneeuniv.anneeuniv }}</td>
                         </tr>
+                        {% endif %}
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+                {% endif %}
+                <h3>Semestre 5</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Code</th>
+                            <th scope="col">Matière</th>
+                            <th scope="col">Note CC1</th>
+                            <th scope="col">Note CC2</th>
+                            <th scope="col">Note CC3</th>
+                            <th scope="col">Moyenne</th>
+                            <th scope="col">Statut</th>
+                            <th scope="col">Rang</th>
+                            <th scope="col">Année universitaire</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        {% for inscritmat in templateData.listeinscritmat %}
+                        {% if inscritmat.matiere.semestre == 'S5' %}
+                        {% if inscritmat.moyenne is None %}
+                        <tr>
+                            {% elif inscritmat.moyenne >= 10 %}
+                        <tr class="table-success">
+                            {% elif inscritmat.moyenne >= 7 %}
+                        <tr class="table-warning">
+                            {% else %}
+                        <tr class="table-danger">
+                            {% endif %}
+                            <th scope="row">
+                                {% if perms.gestiondejury.change_etudiant %}
+                                <a class="btn btn-success btn-sm"
+                                    href="{% url 'matiere:editnotes' inscritmat.matiere.codeapogee inscritmat.inscriptiondiplome.etudiant.id %}"
+                                    role="button">
+                                    {{ inscritmat.matiere.codeapogee }}</a>
+                                {% else %}
+
+                                {{ inscritmat.matiere.codeapogee }}
+
+                                {% endif %}
+                            </th>
+
+
+
+                            <td>{{ inscritmat.matiere.nom }}</td>
+                            <td>{{ inscritmat.notecc1|floatformat:2 }}</td>
+                            <td>{{ inscritmat.notecc2|floatformat:2 }}</td>
+                            <td>{{ inscritmat.notecc3|floatformat:2 }}</td>
+                            <td class="fw-bold">{{ inscritmat.moyenne|floatformat:2}}</td>
+                            <td>{{ inscritmat.statut }}</td>
+                            <td>{{ inscritmat.rang }}</td>
+
+                            <td>{{ inscritmat.inscriptiondiplome.anneeuniv.anneeuniv }}</td>
+                        </tr>
+                        {% endif %}
                         {% endfor %}
 
                     </tbody>

@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required,permission_required
 from django.contrib import messages
 from etudiant.models import Inscriptionmat,Inscriptiondiplome
 from matiere.models import Matiere
-from services.calcul import moyenneMat,calculderang,calculSem,calculderangSemestre
+from services.calcul import moyenneMat,calculderang,calculSem,calculderangSemestre,calculrangannee
 from diplome.models import Anneeuniv
 # Create your views here.
 
@@ -44,6 +44,7 @@ def calculMoyenneMat(request,idmat,alt):
 @login_required
 @permission_required('etudiant.change_etudiant', raise_exception=True)
 def calculMoyenneSemestre(request,sem,alt):
+    #calcul de toutes les matières du semestre
     anneunivencours = Anneeuniv.objects.get(encours = True)
     listematieres = Matiere.objects.filter(semestre=sem)
     for matiere in listematieres:
@@ -115,6 +116,35 @@ def calculSemestre(request,sem,alt):
 @login_required
 @permission_required('etudiant.change_etudiant', raise_exception=True)
 def calculAnnee(request,codeDipl,alt):
-    return redirect('etudiant:index')    
+    anneunivencours = Anneeuniv.objects.get(encours = True)
+    listeInscritDiplome = Inscriptiondiplome.objects.filter(anneeuniv=anneunivencours)
+    if alt == "alt":
+        listeInscritDiplome=listeInscritDiplome.filter(alternant=True)
+    elif alt == "nonalt":
+        listeInscritDiplome=listeInscritDiplome.filter(alternant=False)
+    for inscridiplome in listeInscritDiplome:
+        if inscridiplome.noteSem1 is not None and inscridiplome.noteSem2 is not None:
+            inscridiplome.noteAnnee = (inscridiplome.noteSem1 +inscridiplome.noteSem2)/2
+
+            if inscridiplome.statutS1=="ADM" and inscridiplome.statutS2=="ADM":
+                inscridiplome.statutDipl = "ADM"
+            elif inscridiplome.statutS1!="ADJ":
+                inscridiplome.statutDipl = "AJ"
+
+            
+        
+            inscridiplome.save()
+    calculrangannee(listeInscritDiplome)
+
+
+
+
+    messages.info(request, "Calcul des moyennes et Rang : année")
+    return redirect('etudiant:index') 
+
+
+
+
+
 
     
