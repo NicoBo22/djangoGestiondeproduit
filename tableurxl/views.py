@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
 
 import pandas as pd
+import math
 from .forms import UploadFileForm
 from django.contrib.auth.decorators import login_required,permission_required
 from io import BytesIO
@@ -91,22 +92,28 @@ def  upload_excelnotesmat(request,codemat):
             ligne = 10
             nonInscritsdiplome=[]
             nonInscritsmatiere=[]
+            message = "Listes\n"
             while (pd.notna(df.iloc[ligne, 0] )):
 
                 inscriptiondipl = Inscriptiondiplome.objects.filter(etudiant__numero=df.iloc[ligne, 0],anneeuniv=anneeunivencours).first()
                 if inscriptiondipl is None:
                     nonInscritsdiplome.append([df.iloc[ligne, 0],df.iloc[ligne, 1],df.iloc[ligne, 2]])
+                    message +=str(df.iloc[ligne, 0])+" : "+ str(df.iloc[ligne, 1])+'\n'
                 else:
                     inscriptionmat=Inscriptionmat.objects.filter(inscriptiondiplome = inscriptiondipl,matiere = matiere).first()
                     if inscriptionmat is None:
                         nonInscritsmatiere.append([df.iloc[ligne, 0],df.iloc[ligne, 1],df.iloc[ligne, 2]])
+                        message += str(df.iloc[ligne, 0])+" : "+ str(df.iloc[ligne, 1])+'\n'
                     else:
                         inscriptionmat.notecc1=df.iloc[ligne, 11]
                         inscriptionmat.notecc2=df.iloc[ligne, 12]
                         inscriptionmat.notecc3=df.iloc[ligne, 13]
+                        if not(math.isnan(df.iloc[ligne, 8])):
+
+                            inscriptionmat.pointjury=df.iloc[ligne, 8]
                         inscriptionmat.save()
                 ligne+=1
-            message = "Attention : "+ str(len(nonInscritsdiplome)) +" non inscrits diplome. "
+            message += "Attention : "+ str(len(nonInscritsdiplome)) +" non inscrits diplome. "
             message+= str(len( nonInscritsmatiere))+" non inscrits matière"
             messages.warning(request, message )
             return redirect('matiere:notes',code = codemat)
