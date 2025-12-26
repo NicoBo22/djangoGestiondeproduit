@@ -131,20 +131,25 @@
             <a class="btn btn-success"
                 href="{% url 'jury:avispoursuite' templateData.insdiplome.etudiant.id  %}?avis=Tf" role="button">Très
                 favorable</a>
+            nbr : {{ templateData.poursuite.0}}/{{ templateData.poursuite.1|floatformat:2}}%
         </div>
+
         <div class="col-3">
             <a class="btn btn-success"
                 href="{% url 'jury:avispoursuite' templateData.insdiplome.etudiant.id  %}?avis=Fa"
                 role="button">Favorable</a>
+            nbr : {{ templateData.poursuite.2}}/{{ templateData.poursuite.3|floatformat:2}}%
         </div>
         <div class="col-3">
             <a class="btn btn-success"
                 href="{% url 'jury:avispoursuite' templateData.insdiplome.etudiant.id  %}?avis=Re"
                 role="button">Réservé</a>
+            nbr : {{ templateData.poursuite.4}}/{{ templateData.poursuite.5|floatformat:2}}%
         </div>
         <div class="col-3">
             <a class="btn btn-danger" href="{% url 'jury:avispoursuite' templateData.insdiplome.etudiant.id  %}?avis=De"
                 role="button">Défavorable</a>
+            nbr : {{ templateData.poursuite.6}}/{{ templateData.poursuite.7|floatformat:2}}%
         </div>
 
     </div>

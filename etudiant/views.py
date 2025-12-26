@@ -104,11 +104,12 @@ def addinscriptionmat(request,id):
 
 @login_required
 def listeetudiant(request,alt):
-    anneeunivencours = Anneeuniv.objects.get(encours = True)
+    anneeunivsession = request.session.get('anneesession')
 
+    anneeuniv =get_object_or_404(Anneeuniv,anneeuniv=anneeunivsession)  
     templateData = {}
     templateData ['titre']= "Etudiants"
-    ListeInscritDiplome = Inscriptiondiplome.objects.filter(anneeuniv=anneeunivencours)
+    ListeInscritDiplome = Inscriptiondiplome.objects.filter(anneeuniv=anneeuniv)
     if alt == 'alt':
         
         ListeInscritDiplome = ListeInscritDiplome.filter(alternant=True).order_by('etudiant__nom','etudiant__prenom')
@@ -124,7 +125,7 @@ def listeetudiant(request,alt):
 
     
     templateData ['inscritdiplome']= ListeInscritDiplome
-    templateData['anneeuniv'] = anneeunivencours
+    templateData['anneeuniv'] = anneeuniv
     return render (request,'etudiant/listeetudiant.html'
                   ,{'templateData': templateData} )
 

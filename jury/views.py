@@ -63,6 +63,22 @@ def juryS5(request,rang):
                                                       anneeuniv=anneeuniv,
                                                       alternant = alt)
     nbreetudiants = len( listeInscriptionDiplome)
+    lpoursuiteEtude=[]
+    liste = listeInscriptionDiplome.filter(avispoursuite ="TF")
+    lpoursuiteEtude.append(len(liste))
+    lpoursuiteEtude.append(len(liste)/ nbreetudiants *100)
+    liste = listeInscriptionDiplome.filter(avispoursuite ="FA")
+    lpoursuiteEtude.append(len(liste))
+    lpoursuiteEtude.append(len(liste)/ nbreetudiants *100)
+    liste = listeInscriptionDiplome.filter(avispoursuite ="RE")
+    lpoursuiteEtude.append(len(liste))
+    lpoursuiteEtude.append(len(liste)/ nbreetudiants *100)
+    liste = listeInscriptionDiplome.filter(avispoursuite ="DE")
+    lpoursuiteEtude.append(len(liste))
+    lpoursuiteEtude.append(len(liste)/ nbreetudiants *100)
+
+
+
     listeInscriptionDiplome=listeInscriptionDiplome.order_by("-noteSem1")   
     etudiant =listeInscriptionDiplome[rang-1].etudiant
     inscridipl = listeInscriptionDiplome.get(etudiant=etudiant,anneeuniv=anneeuniv)
@@ -81,6 +97,7 @@ def juryS5(request,rang):
     templateData ['insdiplome']=inscridipl   
     templateData ['nbreetudiants']=nbreetudiants 
     templateData ['juryS5']=True
+    templateData ['poursuite']= lpoursuiteEtude
     return render (request,'jury/juryS5etudiant.html'
                   ,{'templateData': templateData} )
 

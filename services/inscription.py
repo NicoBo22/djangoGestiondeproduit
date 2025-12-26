@@ -47,7 +47,7 @@ def fonctioninscriptionsetudiant():
             inscriptionmatiere.save()
 
 def calculNote():
-    note = round(gauss(9,6),3)
+    note = round(gauss(9,10),3)
     if note > 20:
         note = 19.5
     if note < 0:
