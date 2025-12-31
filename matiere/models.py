@@ -1,4 +1,8 @@
 from django.db import models
+
+from diplome.models import Anneeuniv
+
+
 class Matiere(models.Model):
 
     
@@ -13,3 +17,8 @@ class Matiere(models.Model):
         return self.nom
     
 # Create your models here.
+class Nbreinscrit(models.Model):
+    matiere =models.ForeignKey(Matiere, on_delete=models.CASCADE)
+    anneeuniv=models.ForeignKey(Anneeuniv, on_delete=models.CASCADE)
+    nbrInscrit=models.IntegerField()
+    alt=models.BooleanField()

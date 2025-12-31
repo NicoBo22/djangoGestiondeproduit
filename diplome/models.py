@@ -1,10 +1,13 @@
 from django.db import models
 
+
 # Create your models here.
 class Diplome(models.Model):
   
      codeapogee = models.CharField(max_length=25, unique = True)
      nom = models.CharField(max_length=255)
+     matieres = models.ManyToManyField('matiere.Matiere')
+
 
   
 

@@ -5,7 +5,7 @@ import math
 from .forms import UploadFileForm
 from django.contrib.auth.decorators import login_required,permission_required
 from io import BytesIO
-from etudiant.models import Inscriptiondiplome,Inscriptionmat
+from etudiant.models import Inscriptiondiplome,Inscriptionmat,Etudiant
 from diplome.models import Anneeuniv,Diplome
 from matiere.models import Matiere
 from django.contrib import messages
@@ -45,24 +45,131 @@ def upload_excelinsdiplome(request):
             # Lire le fichier Excel directement en mémoire
             file_in_memory = BytesIO(uploaded_file.read())
             df = pd.read_excel(file_in_memory)
-
+            anneeunivencours = Anneeuniv.objects.get(encours = True)
             for row in df.itertuples(index=True):
+                etudiant = Etudiant()
+                etudiant.numero = row.code
+                etudiant.nom = row.nom
+                etudiant.prenom=row.prenom
+                if row.Civil=="Monsieur":
+                    etudiant.genre = Etudiant.Genre.Monsieur
+                elif row.Civil=="Madame":
+                    etudiant.genre = Etudiant.Genre.Madame
+                etudiant.datedenaissance = row.dateNais
+                etudiant.save()
+                inscriptiondipl = Inscriptiondiplome()
+                inscriptiondipl.etudiant=etudiant
+                inscriptiondipl.Nmoinsun=row.Nmoinsun
+                inscriptiondipl.anneeuniv=anneeunivencours
+                inscriptiondipl.diplome=Diplome.objects.get(id=1)
+                inscriptiondipl.save()
 
-                inscriptiondipl = Inscriptiondiplome.objects.filter(etudiant__numero=row.Num).first()
-                if inscriptiondipl is None:
-                    print(row.nom, " : ",row.prenom)
+
+                if row.alternant =='x':
+                    inscriptiondipl.alternant=True
+                if row.neu == 'x':
+                    inscriptiondipl.neu = True
+                if row.iaL2 == 'x':
+                    inscriptiondipl.iaL2 = True
+                if row.redoublant == 'x':
+                    inscriptiondipl.redoublant = True
+                    inscription2 =Inscriptiondiplome()
+                    inscription2.anneeuniv=Anneeuniv.objects.get(id = 1)
+                    inscription2.etudiant=etudiant
+                    inscription2.diplome=Diplome.objects.get(id=1)
+                    inscription2.save()
+                    diplome = Diplome.objects.get(id=1)  # ou filter selon besoin
+                    listematieres = diplome.matieres.all()
+                    for matiere in  listematieres:
+                        insmat=Inscriptionmat()
+                        insmat.matiere=matiere
+                        insmat.inscriptiondiplome=inscription2
+                        insmat.save()
+                    inscriptiondipl.save() 
+                    if row.kMKGIG30=="IP":
+                        insmat=Inscriptionmat()
+                        insmat.matiere=Matiere.objects.get(id=5)
+                        insmat.inscriptiondiplome=inscriptiondipl
+                        insmat.save()
+                    if row.kMKXIM30=="IP":
+                        insmat=Inscriptionmat()
+                        insmat.matiere=Matiere.objects.get(id=7)
+                        insmat.inscriptiondiplome=inscriptiondipl
+                        insmat.save()
+                    if row.kMKXIN20=="IP":
+                        insmat=Inscriptionmat()
+                        insmat.matiere=Matiere.objects.get(id=6)
+                        insmat.inscriptiondiplome=inscriptiondipl
+                        insmat.save()
+                    if row.kMKXIL31=="IP":
+
+                        insmat=Inscriptionmat()
+                        insmat.matiere=Matiere.objects.get(id=11)
+                        insmat.inscriptiondiplome=inscriptiondipl
+                        insmat.save()                                      
+                    if row.kMKGIG20=="IP":
+                        insmat=Inscriptionmat()
+                        insmat.matiere=Matiere.objects.get(id=4)
+                        insmat.inscriptiondiplome=inscriptiondipl
+                        insmat.save() 
+                    if row.kMKXIF20=="IP":
+                        insmat=Inscriptionmat()
+                        insmat.matiere=Matiere.objects.get(id=8)
+                        insmat.inscriptiondiplome=inscriptiondipl
+                        insmat.save()                           
+                    if row.kMKGIG10=="IP":
+                        insmat=Inscriptionmat()
+                        insmat.matiere=Matiere.objects.get(id=2)
+                        insmat.inscriptiondiplome=inscriptiondipl
+                        insmat.save()
+                    if row.kMKXIS20=="IP":
+                        insmat=Inscriptionmat()
+                        insmat.matiere=Matiere.objects.get(id=8)
+                        insmat.inscriptiondiplome=inscriptiondipl
+                        insmat.save()
+                    if row.kMKXIX20=="IP":
+                        insmat=Inscriptionmat()
+                        insmat.matiere=Matiere.objects.get(id=1)
+                        insmat.inscriptiondiplome=inscriptiondipl
+                        insmat.save()         
+                    if row.kMKGIG40=="IP":
+                        insmat=Inscriptionmat()
+                        insmat.matiere=Matiere.objects.get(id=9)
+                        insmat.inscriptiondiplome=inscriptiondipl
+                        insmat.save()
+                    if row.kMKXIT10=="IP":
+                        insmat=Inscriptionmat()
+                        insmat.matiere=Matiere.objects.get(id=10)
+                        insmat.inscriptiondiplome=inscriptiondipl
+                        insmat.save()                                        
+                                                       
                 else:
 
-                    if row.alternant =='x':
-                        inscriptiondipl.alternant=True
-                    if row.neu == 'x':
-                        inscriptiondipl.neu = True
-                    if row.iaL2 == 'x':
-                        inscriptiondipl.iaL2 = True
-                    if row.redoublant == 'x':
-                        inscriptiondipl.redoublant = True
                     inscriptiondipl.save()
+                    diplome = Diplome.objects.get(id=1)  # ou filter selon besoin
+                    listematieres = diplome.matieres.exclude(id__in=[9,10])
+                    for matiere in  listematieres:
                 
+
+                        insmat=Inscriptionmat()
+                        insmat.matiere=matiere
+                        insmat.inscriptiondiplome=inscriptiondipl
+                        insmat.save()
+                    if row.kMKGIG40 =="IP":
+                        insmat=Inscriptionmat()
+                        insmat.matiere = Matiere.objects.get(id=9)
+                        insmat.inscriptiondiplome=inscriptiondipl
+                        insmat.save()
+                    else:
+                        insmat=Inscriptionmat()
+                        insmat.matiere = Matiere.objects.get(id=10)
+                        insmat.inscriptiondiplome=inscriptiondipl
+                        insmat.save()
+                
+
+
+
+
                 
             return redirect('etudiant:index')
 

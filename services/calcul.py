@@ -1,6 +1,6 @@
 from etudiant.models import Inscriptionmat
-from matiere.models import Matiere
-
+from matiere.models import Matiere,Nbreinscrit
+from diplome.models import Anneeuniv
 def moyenneMat(inscriptionmat):
     tuplenotesCC = (inscriptionmat.notecc1,inscriptionmat.notecc2,inscriptionmat.notecc3)
     moyenne = None
@@ -71,11 +71,12 @@ def calculSem(etudiant,sem) :
         listeins=Inscriptionmat.objects.filter(inscriptiondiplome__etudiant=etudiant,matiere=mat).order_by("matiere_id","-inscriptiondiplome__anneeuniv")
         if len(listeins)>0:
             if listeins[0].moyenne is not None:
+               
                 somme+=listeins[0].moyenne
                 if listeins[0].moyenne>=10.0:
                     nbADM +=1
                 nbMat +=1
-
+   
     if nbMat ==10:
         moyennesemestre = round(somme/10,3)
         if  nbADM ==10:
@@ -105,3 +106,17 @@ def calculrangannee(liste):
         inscritdipl.rangAnnee = rang
         inscritdipl.save()    
 
+def calculNbreInscrit():
+    anneeunivencours = Anneeuniv.objects.get(encours = True)
+    listeMatieres = Matiere.objects.all()
+    for matiere in listeMatieres:
+        if Nbreinscrit.objects.filter(matiere = matiere,anneeuniv=anneeunivencours).exists():
+            nb = Nbreinscrit.objects.filter(matiere = matiere,anneeuniv=anneeunivencours)
+            nb.nbrInscrit =   Inscriptionmat.objects.filter(matiere =matiere,inscritdiplome__anneeuniv= anneeunivencours).count()
+            nb.save()
+        else:
+            nbinscrit= Nbreinscrit()
+            nbinscrit.matiere=matiere
+            nbinscrit.anneeuniv=anneeunivencours
+            nbinscrit.nbrInscrit = Inscriptionmat.objects.filter(matiere =matiere,inscriptiondiplome__anneeuniv= anneeunivencours).count()
+            nbinscrit.save()

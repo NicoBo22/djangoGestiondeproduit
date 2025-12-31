@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required,permission_required
 from django.contrib import messages
 from etudiant.models import Inscriptionmat,Inscriptiondiplome
 from matiere.models import Matiere
-from services.calcul import moyenneMat,calculderang,calculSem,calculderangSemestre,calculrangannee
+from services.calcul import moyenneMat,calculderang,calculSem,calculderangSemestre,calculrangannee,calculNbreInscrit
 from diplome.models import Anneeuniv
 # Create your views here.
 
@@ -12,8 +12,16 @@ from diplome.models import Anneeuniv
 @permission_required('etudiant.change_etudiant', raise_exception=True)
 def inscription(request):
     fonctioninscriptionsetudiant()
-    messages.info(request, "Inscription diplome et matières" )
+    messages.info(request, "Création de notes fictives" )
     return redirect('home:index')
+
+@login_required
+@permission_required('etudiant.change_etudiant', raise_exception=True)
+def nbrinscritmatiere(request):
+    calculNbreInscrit()
+    messages.info(request, "calcul du nombre d inscrit par matière" )
+    return redirect('home:index')
+
 
 @login_required
 @permission_required('etudiant.change_etudiant', raise_exception=True)

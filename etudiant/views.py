@@ -31,7 +31,7 @@ def addetudiant(request):
         if form.is_valid():
             etudiant=form.save()
             
-            return redirect('etudiant:vue',id=etudiant.id)
+            return redirect('etudiant:addinscriptiondipl')
     else:
         form=EtudiantForm()
     templateData = {}

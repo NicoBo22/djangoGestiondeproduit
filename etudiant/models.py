@@ -18,7 +18,7 @@ class Etudiant(models.Model):
     genre = models.CharField(choices=Genre.choices, max_length=5)
 
     datedenaissance = models.DateField( null=True)
-    Nmoinsun = models.CharField(max_length=255, null=True,blank=True)
+   
 
 
     photo = models.ImageField(upload_to='photos/', default='photos/image.jpg')
@@ -43,9 +43,9 @@ class Inscriptiondiplome(models.Model):
         ENTRANT='E','Entrant'
         SORTANT = 'S','Sortant'
 
-    etudiant = models.ForeignKey(Etudiant,on_delete=models.CASCADE, related_name="inscriptionDipEtud")
-    diplome = models.ForeignKey(Diplome,on_delete=models.CASCADE, related_name="inscriptionDip")
-    anneeuniv=models.ForeignKey(Anneeuniv,on_delete=models.CASCADE)
+    etudiant = models.ForeignKey(Etudiant,on_delete=models.CASCADE, related_name="inscriptions")
+    diplome = models.ForeignKey(Diplome,on_delete=models.CASCADE, related_name="inscriptions")
+    anneeuniv=models.ForeignKey(Anneeuniv,on_delete=models.CASCADE, related_name="inscriptions")
     noteSem1=models.FloatField(null=True,default=None,blank = True)
     rangSem1=models.IntegerField(null=True)
     noteSem2=models.FloatField(null=True,default=None,blank = True)
@@ -68,6 +68,7 @@ class Inscriptiondiplome(models.Model):
     tierstemps = models.BooleanField(default=False)
     rse = models.BooleanField(default=False)
     redoublant =models.BooleanField(default=False)
+    Nmoinsun = models.CharField(max_length=255, null=True,blank=True)
 
     def __str__(self):
         return self.anneeuniv.anneeuniv + ' : ' +self.etudiant.nom +' '+self.diplome.nom      
