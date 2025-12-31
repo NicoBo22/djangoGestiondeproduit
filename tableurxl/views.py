@@ -124,7 +124,7 @@ def upload_excelinsdiplome(request):
                         insmat.save()
                     if row.kMKXIS20=="IP":
                         insmat=Inscriptionmat()
-                        insmat.matiere=Matiere.objects.get(id=8)
+                        insmat.matiere=Matiere.objects.get(id=3)
                         insmat.inscriptiondiplome=inscriptiondipl
                         insmat.save()
                     if row.kMKXIX20=="IP":

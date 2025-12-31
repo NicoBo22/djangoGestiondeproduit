@@ -153,7 +153,7 @@ def vueetudiant(request, id):
     ListeInscritmat =Inscriptionmat.objects.filter(inscriptiondiplome__etudiant=etudiant )
     if(not(anneeunivencours.S2)):
         ListeInscritmat = ListeInscritmat.filter(matiere__semestre ="S5")
-    ListeInscritmat = ListeInscritmat.order_by('matiere__semestre')
+    ListeInscritmat = ListeInscritmat.order_by('matiere__semestre','matiere__nom','inscriptiondiplome__anneeuniv')
 
     templateData = {}
     templateData ['titre']= "Etudiant : " + etudiant.nom +" "+  etudiant.prenom 

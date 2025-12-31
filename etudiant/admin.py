@@ -9,7 +9,7 @@ class InscriptiondiplomeAdmin(admin.ModelAdmin) :
              ]
 
 class InscriptionmatAdmin(admin.ModelAdmin) :
-    exclude =[ "decisionmat" ]
+    exclude =[ "decisionmat","pointjury" ]
 
 class EtudiantAdmin(admin.ModelAdmin) :
     exclude =[ "avispoursuite","Nmoinsun","erasmus" ]

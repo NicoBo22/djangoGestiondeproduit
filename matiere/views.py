@@ -24,9 +24,12 @@ def indexmatiere(request):
 @login_required
 def notes(request,code):
     matiere = Matiere.objects.get(codeapogee=code)
-    anneeunivencours = Anneeuniv.objects.get(encours = True)
+    anneeunivsession = request.session.get('anneesession')
+
+    anneeuniv =get_object_or_404(Anneeuniv,anneeuniv=anneeunivsession)  
+
     alt = request.GET.get('alt','false').lower()=='true'
-    ListeInscritmat =Inscriptionmat.objects.filter(matiere=matiere ,inscriptiondiplome__anneeuniv=anneeunivencours)
+    ListeInscritmat =Inscriptionmat.objects.filter(matiere=matiere ,inscriptiondiplome__anneeuniv=anneeuniv)
     if alt :
         ListeInscritmat=ListeInscritmat.filter(inscriptiondiplome__alternant=alt)
     ListeInscritmat = ListeInscritmat.exclude(moyenne__isnull = True)
@@ -42,9 +45,10 @@ def notes(request,code):
 @permission_required('gestiondejury.change_etudiant', raise_exception = True)
 def editnotes(request,code,etudiant):
     matiere = Matiere.objects.get(codeapogee=code)
-    anneeunivencours = Anneeuniv.objects.get(encours = True)
+    anneeunivsession = request.session.get('anneesession')
+    anneeuniv =get_object_or_404(Anneeuniv,anneeuniv=anneeunivsession)  
     etudiant= Etudiant.objects.get(id=etudiant)
-    inscritmat = get_object_or_404(Inscriptionmat, inscriptiondiplome__etudiant = etudiant,matiere = matiere,inscriptiondiplome__anneeuniv = anneeunivencours)
+    inscritmat = get_object_or_404(Inscriptionmat, inscriptiondiplome__etudiant = etudiant,matiere = matiere,inscriptiondiplome__anneeuniv =  anneeuniv)
    # inscridipl = Inscriptiondiplome.objects.get(etudiant=etudiant,anneeuniv=anneeunivencours)
     if request.method == 'POST':
         notesCCform = CCForm(request.POST)
@@ -63,17 +67,18 @@ def editnotes(request,code,etudiant):
             inscritmat.notecc3 = cc3
             inscritmat.moyenne=moyenneMat(inscritmat)
             inscritmat.save()
-            if inscritmat.moyenne>=10:
-                inscritmat.statut = "ADM"
-            elif inscritmat.statut != "ADJ":
-                inscritmat.statut = "AJ"
+            if inscritmat.moyenne is not None:
+                if inscritmat.moyenne>=10:
+                    inscritmat.statut = "ADM"
+                elif inscritmat.statut != "ADJ":
+                    inscritmat.statut = "AJ"
             
             if inscritmat.inscriptiondiplome.alternant:
-                listeInscrimat =Inscriptionmat.objects.filter(anneeuniv=anneeunivencours,matiere=matiere,inscriptiondiplome__alternant=True)
+                listeInscrimat =Inscriptionmat.objects.filter(inscriptiondiplome__anneeuniv=anneeuniv,matiere=matiere,inscriptiondiplome__alternant=True)
              
             else:
 
-                listeInscrimat =Inscriptionmat.objects.filter(inscriptiondiplome__anneeuniv=anneeunivencours,matiere=matiere,inscriptiondiplome__alternant=False)
+                listeInscrimat =Inscriptionmat.objects.filter(inscriptiondiplome__anneeuniv=anneeuniv,matiere=matiere,inscriptiondiplome__alternant=False)
            
             calculderang(listeInscrimat)
             
