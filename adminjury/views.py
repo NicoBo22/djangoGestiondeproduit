@@ -1,4 +1,4 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from services.inscription import fonctioninscriptionsetudiant
 from django.contrib.auth.decorators import login_required,permission_required
 from django.contrib import messages
@@ -26,13 +26,17 @@ def nbrinscritmatiere(request):
 @login_required
 @permission_required('etudiant.change_etudiant', raise_exception=True)
 def calculMoyenneMat(request,idmat,alt):
-    anneunivencours = Anneeuniv.objects.get(encours = True)
+   
+
+    anneeunivsession = request.session.get('anneesession')
+
+    anneeuniv =get_object_or_404(Anneeuniv,anneeuniv=anneeunivsession)  
     if alt == "alt":
-        listeInscrimat =Inscriptionmat.objects.filter(inscriptiondiplome__anneeuniv=anneunivencours,matiere=idmat,inscriptiondiplome__alternant=True)
+        listeInscrimat =Inscriptionmat.objects.filter(inscriptiondiplome__anneeuniv=anneeuniv,matiere=idmat,inscriptiondiplome__alternant=True)
 
     else:
 
-        listeInscrimat =Inscriptionmat.objects.filter(inscriptiondiplome__anneeuniv=anneunivencours,matiere=idmat,inscriptiondiplome__alternant=False)
+        listeInscrimat =Inscriptionmat.objects.filter(inscriptiondiplome__anneeuniv=anneeuniv,matiere=idmat,inscriptiondiplome__alternant=False)
 
     for inscrimat in listeInscrimat:
         inscrimat.moyenne = moyenneMat(inscrimat)
@@ -53,18 +57,23 @@ def calculMoyenneMat(request,idmat,alt):
 @permission_required('etudiant.change_etudiant', raise_exception=True)
 def calculMoyenneSemestre(request,sem,alt):
     #calcul de toutes les matières du semestre
-    anneunivencours = Anneeuniv.objects.get(encours = True)
+  
+
+    anneeunivsession = request.session.get('anneesession')
+
+    anneeuniv =get_object_or_404(Anneeuniv,anneeuniv=anneeunivsession)  
+
     listematieres = Matiere.objects.filter(semestre=sem)
     for matiere in listematieres:
 
         if alt == "alt":
-            listeInscrimat =Inscriptionmat.objects.filter(inscriptiondiplome__anneeuniv=anneunivencours,
+            listeInscrimat =Inscriptionmat.objects.filter(inscriptiondiplome__anneeuniv=anneeuniv,
                                                           inscriptiondiplome__alternant=True,matiere=matiere)            
 
 
         else:
 
-            listeInscrimat =Inscriptionmat.objects.filter(inscriptiondiplome__anneeuniv=anneunivencours,
+            listeInscrimat =Inscriptionmat.objects.filter(inscriptiondiplome__anneeuniv=anneeuniv,
                                                           inscriptiondiplome__alternant=False,matiere=matiere)
 
         for inscrimat in listeInscrimat:
@@ -85,8 +94,12 @@ def calculMoyenneSemestre(request,sem,alt):
 @login_required
 @permission_required('etudiant.change_etudiant', raise_exception=True)
 def calculSemestre(request,sem,alt):
-    anneunivencours = Anneeuniv.objects.get(encours = True)
-    listeInscritDiplomeSem = Inscriptiondiplome.objects.filter(anneeuniv=anneunivencours)
+
+    anneeunivsession = request.session.get('anneesession')
+
+    anneeuniv =get_object_or_404(Anneeuniv,anneeuniv=anneeunivsession)  
+
+    listeInscritDiplomeSem = Inscriptiondiplome.objects.filter(anneeuniv=anneeuniv)
     if alt == "alt":
         listeInscritDiplomeSem=listeInscritDiplomeSem.filter(alternant=True)
     elif alt == "nonalt":
@@ -96,7 +109,7 @@ def calculSemestre(request,sem,alt):
             etud = inscridiplome.etudiant
             
           
-            moyenneSem=calculSem(etud,'S5')
+            moyenneSem=calculSem(etud,'S5', anneeunivsession )
             
             inscridiplome.noteSem1 = moyenneSem[0]
             if inscridiplome.statutS1 != "ADJ":
@@ -105,7 +118,7 @@ def calculSemestre(request,sem,alt):
             etud = inscridiplome.etudiant
             
           
-            moyenneSem=calculSem(etud,'S6')
+            moyenneSem=calculSem(etud,'S6', anneeunivsession )
             
             inscridiplome.noteSem2 = moyenneSem[0]
             if inscridiplome.statutS2 != "ADJ":
@@ -124,8 +137,12 @@ def calculSemestre(request,sem,alt):
 @login_required
 @permission_required('etudiant.change_etudiant', raise_exception=True)
 def calculAnnee(request,codeDipl,alt):
-    anneunivencours = Anneeuniv.objects.get(encours = True)
-    listeInscritDiplome = Inscriptiondiplome.objects.filter(anneeuniv=anneunivencours)
+
+    anneeunivsession = request.session.get('anneesession')
+
+    anneeuniv =get_object_or_404(Anneeuniv,anneeuniv=anneeunivsession)  
+
+    listeInscritDiplome = Inscriptiondiplome.objects.filter(anneeuniv=anneeuniv)
     if alt == "alt":
         listeInscritDiplome=listeInscritDiplome.filter(alternant=True)
     elif alt == "nonalt":
@@ -150,7 +167,34 @@ def calculAnnee(request,codeDipl,alt):
     messages.info(request, "Calcul des moyennes et Rang : année")
     return redirect('etudiant:index') 
 
+@login_required
+@permission_required('etudiant.change_etudiant', raise_exception=True)
+def reset(request):
+    anneeunivsession = request.session.get('anneesession')
 
+    anneeuniv =get_object_or_404(Anneeuniv,anneeuniv=anneeunivsession) 
+    listeInscritDiplome = Inscriptiondiplome.objects.filter(anneeuniv=anneeuniv)
+    for inscritdiplom in listeInscritDiplome:
+        listematieres = Matiere.objects.all()
+        for matiere in listematieres:
+           if Inscriptionmat.objects.filter(inscriptiondiplome=inscritdiplom,matiere=matiere).exists():
+               inscriptionmat = Inscriptionmat.objects.get(inscriptiondiplome=inscritdiplom,matiere=matiere)
+               inscriptionmat.notecc1 = None
+               inscriptionmat.notecc2 = None
+               inscriptionmat.notecc3 = None
+               inscriptionmat.moyenne = None
+               inscriptionmat.statut = None
+               inscriptionmat.rang = None
+               inscriptionmat.pointjury = None
+               inscriptionmat.save()
+
+
+
+
+
+
+    messages.info(request, "Reset effectué")
+    return redirect('etudiant:index' ) 
 
 
 

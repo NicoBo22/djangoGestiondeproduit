@@ -7,6 +7,8 @@ from etudiant.models import Inscriptionmat,Etudiant,Inscriptiondiplome
 from .forms import CCForm
 from services.calcul import  moyenneMat,calculderang
 
+import  datetime
+
 # Create your views here.
 
 @login_required
@@ -66,6 +68,9 @@ def editnotes(request,code,etudiant):
             inscritmat.notecc2 = cc2
             inscritmat.notecc3 = cc3
             inscritmat.moyenne=moyenneMat(inscritmat)
+            if notesCCform.cleaned_data['ADJ']:
+                inscritmat.statut = "ADJ"
+                inscritmat.decisionmat = datetime.datetime.now()
             inscritmat.save()
             if inscritmat.moyenne is not None:
                 if inscritmat.moyenne>=10:

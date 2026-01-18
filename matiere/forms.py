@@ -17,6 +17,10 @@ class CCForm(forms.Form):
         min_value=0.0,
         max_value=20.0,
         required=False)
+    ADJ = forms.BooleanField(
+        label="ADJ",
+        required=False)
+
     
     def __init__(self, *args, **kwargs):
         inscrimat = kwargs.pop('inscrimat', None)

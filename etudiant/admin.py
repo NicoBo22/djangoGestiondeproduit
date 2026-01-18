@@ -3,16 +3,21 @@ from django.contrib import admin
 from .models import Etudiant,Inscriptiondiplome,Inscriptionmat
 
 class InscriptiondiplomeAdmin(admin.ModelAdmin) :
+    list_filter = ['anneeuniv','etudiant__nom']
     list_display = ["etudiant",'diplome','anneeuniv']
-    exclude=["noteSem1",'rangSem1',"noteSem2",'rangSem2','noteAnnee',"statutDipl",'datedecisionDipl',
-             'rangAnnee','statutS1','datedecisionS1','statutS2','datedecisionS2','avispoursuite'
+    exclude=["noteSem1",'rangSem1',"noteSem2",'rangSem2','noteAnnee',
+             'rangAnnee','avispoursuite'
              ]
 
 class InscriptionmatAdmin(admin.ModelAdmin) :
-    exclude =[ "decisionmat","pointjury" ]
+    exclude=["pointjury"]
+    list_filter = ['matiere','inscriptiondiplome__etudiant__nom']
+   # exclude =[ "decisionmat","pointjury" ]
 
 class EtudiantAdmin(admin.ModelAdmin) :
     exclude =[ "avispoursuite","Nmoinsun","erasmus" ]
+    ordering = ['nom']
+
 
 
 admin.site.register(Etudiant,EtudiantAdmin)

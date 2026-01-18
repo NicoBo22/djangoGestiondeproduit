@@ -1,7 +1,9 @@
 from etudiant.models import Inscriptionmat
 from matiere.models import Matiere,Nbreinscrit
 from diplome.models import Anneeuniv
+from django.shortcuts import get_object_or_404
 def moyenneMat(inscriptionmat):
+    #Calcul la moyenne d'une matière
     tuplenotesCC = (inscriptionmat.notecc1,inscriptionmat.notecc2,inscriptionmat.notecc3)
     moyenne = None
     if all(cc is not None for cc in tuplenotesCC):
@@ -14,6 +16,7 @@ def moyenneMat(inscriptionmat):
     return moyenne   
 
 def calculderangSemestre(listediplome,sem):
+    #Calcul le rang du semestre et l'ecrit dans la base
     if sem == "S5":
         listediplome =listediplome.order_by('-noteSem1')
         rang = 1
@@ -61,27 +64,27 @@ def calculderang(listeInscrit):
         inscrimat.rang = rang
         inscrimat.save()
 
-def calculSem(etudiant,sem) :
-    #chercher les inscriptions matières
+def calculSem(etudiant,sem,idannee) :
+    anneeuniv =get_object_or_404(Anneeuniv,anneeuniv=idannee)  
     somme =0
     nbADM =0
     nbMat = 0
     listemat = Matiere.objects.filter(semestre=sem)
 
-    annee = Anneeuniv.objects.get(encours = True)
 
 
     for mat in listemat:
 
-        listeins=Inscriptionmat.objects.filter(inscriptiondiplome__etudiant=etudiant,matiere=mat).order_by("matiere_id","-inscriptiondiplome__anneeuniv")
+        listeins=Inscriptionmat.objects.filter(inscriptiondiplome__etudiant=etudiant,matiere=mat,
+                                               inscriptiondiplome__anneeuniv__datedebut__lte=anneeuniv.datedebut).order_by("matiere_id","-inscriptiondiplome__anneeuniv")
         if len(listeins)>0:
             if listeins[0].moyenne is not None:
                
                 somme+=listeins[0].moyenne
-                if listeins[0].moyenne>=10.0:
+                if listeins[0].moyenne>=10.0 or listeins[0].decisionmat =="ADJ":
                     nbADM +=1
                 nbMat +=1
-   
+
     if nbMat ==10:
         moyennesemestre = round(somme/10,3)
         if  nbADM ==10:

@@ -56,6 +56,7 @@ def jurydiplome(request,rang):
 @login_required
 def juryS5(request,rang):
     anneeuniv = Anneeuniv.objects.get(encours = True)
+
     alt = request.GET.get('alt','false').lower()=='true'
     codeAPOGEE = request.GET.get('codeAPOGEE',"K3MKGE")
     diplomejury = Diplome.objects.get(codeapogee= codeAPOGEE)

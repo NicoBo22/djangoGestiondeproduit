@@ -25,9 +25,9 @@ SECRET_KEY = 'django-insecure-nf(^t6(*(hct@ig!609%ile*r5)!o#2)@k(r$@ynaj&8eno-w6
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+#ALLOWED_HOSTS = []
 
-#ALLOWED_HOSTS = ['localhost','gestionproduit.fr','www.gestionproduit.fr']
+ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
@@ -93,18 +93,43 @@ WSGI_APPLICATION = 'gestiondejury.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'dbgestiondejury',
+#         'USER': 'postgres',
+#         'PASSWORD': 'Post+BD2025]',
+#         'HOST': '127.0.0.1',
+#         'PORT': '5433'
+#     }
+# }
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'gestiondejury',
+#         'USER': 'root',
+#         'PASSWORD': '',
+#         'HOST': 'localhost',  # ou IP du serveur
+#         'PORT': '3306',
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#         },
+#     }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dbgestiondejury',
-        'USER': 'postgres',
-        'PASSWORD': 'Post+BD2025]',
-        'HOST': '127.0.0.1',
-        'PORT': '5433'
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'gestionp_gestiondejury',
+        'USER': 'gestionp_jury',
+        'PASSWORD': '!uV[x-vN=?g.}daw',
+        'HOST': 'gestionproduit.fr',  # ou IP du serveur
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
-
-# Password validation
+#Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [

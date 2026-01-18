@@ -196,7 +196,7 @@ def  upload_excelnotesmat(request,codemat):
             uploaded_file = request.FILES['file']
             file_in_memory = BytesIO(uploaded_file.read())
             df = pd.read_excel(file_in_memory)
-            ligne = 10
+            ligne = 12
             nonInscritsdiplome=[]
             nonInscritsmatiere=[]
             message = "Listes\n"
@@ -212,12 +212,10 @@ def  upload_excelnotesmat(request,codemat):
                         nonInscritsmatiere.append([df.iloc[ligne, 0],df.iloc[ligne, 1],df.iloc[ligne, 2]])
                         message += str(df.iloc[ligne, 0])+" : "+ str(df.iloc[ligne, 1])+'\n'
                     else:
-                        inscriptionmat.notecc1=df.iloc[ligne, 11]
-                        inscriptionmat.notecc2=df.iloc[ligne, 12]
-                        inscriptionmat.notecc3=df.iloc[ligne, 13]
-                        if not(math.isnan(df.iloc[ligne, 8])):
-
-                            inscriptionmat.pointjury=df.iloc[ligne, 8]
+                        inscriptionmat.notecc1=df.iloc[ligne, 10]
+                        inscriptionmat.notecc2=df.iloc[ligne, 11]
+                        inscriptionmat.notecc3=df.iloc[ligne, 12]
+  
                         inscriptionmat.save()
                 ligne+=1
             message += "Attention : "+ str(len(nonInscritsdiplome)) +" non inscrits diplome. "
@@ -230,6 +228,53 @@ def  upload_excelnotesmat(request,codemat):
 
     return render(request, 'tableurxl/upload_excel.html', {'form': form, 'data': data})
 
+@login_required
+@permission_required('gestiondejury.change_etudiant', raise_exception = True)
+def  upload_excelnotesmat2(request,codemat):
+    data = None
+    anneeunivencours = Anneeuniv.objects.get(encours = True)
+    matiere = Matiere.objects.get(codeapogee=codemat)
+
+
+
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            uploaded_file = request.FILES['file']
+            file_in_memory = BytesIO(uploaded_file.read())
+            df = pd.read_excel(file_in_memory)
+            
+            nonInscritsdiplome=[]
+            nonInscritsmatiere=[]
+            message = "Listes\n"
+            for index, row in df.iterrows():
+
+                inscriptiondipl = Inscriptiondiplome.objects.filter(etudiant__numero=row['id'],anneeuniv=anneeunivencours).first()
+                if inscriptiondipl is None:
+                    nonInscritsdiplome.append([row['nom']])
+                    message +=str(row['id'])+" : "+ str(row['nom'])+'\n'
+                else:
+                    inscriptionmat=Inscriptionmat.objects.filter(inscriptiondiplome = inscriptiondipl,matiere = matiere).first()
+                    if inscriptionmat is None:
+                        nonInscritsmatiere.append([row['nom']])
+                        message += str([row['nom']])+" : "+ str([row['prenom']])+'\n'
+                    else:
+                        
+                        inscriptionmat.notecc1=float([row['CC1']][0])
+                        inscriptionmat.notecc2=float([row['CC2']][0])
+                        inscriptionmat.notecc3=float([row['CC3']][0])
+  
+                        inscriptionmat.save()
+               
+            message += "Attention : "+ str(len(nonInscritsdiplome)) +" non inscrits diplome. "
+            message+= str(len( nonInscritsmatiere))+" non inscrits matière"
+            messages.warning(request, message )
+            return redirect('matiere:notes',code = codemat)
+    else:
+    
+        form = UploadFileForm()
+
+    return render(request, 'tableurxl/upload_excel.html', {'form': form, 'data': data})
 
 
             

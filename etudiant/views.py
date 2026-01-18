@@ -131,27 +131,30 @@ def listeetudiant(request,alt):
 
 @login_required
 def vueetudiant(request, id): 
+    anneeunivsession = request.session.get('anneesession')
+
+    anneeuniv =get_object_or_404(Anneeuniv,anneeuniv=anneeunivsession) 
     etudiant = Etudiant.objects.get(id=id)
 
     anneeunivencours = Anneeuniv.objects.get(encours = True)
     listeinsdiplome = Inscriptiondiplome.objects.filter(etudiant=etudiant)
     listeinsdiplome =listeinsdiplome.order_by('anneeuniv__datedebut')
     try:
-        inscridipl = listeinsdiplome.get(etudiant=etudiant,anneeuniv=anneeunivencours)
+        inscridipl = Inscriptiondiplome.objects.get(etudiant=etudiant,anneeuniv=anneeuniv)
 
     except (ObjectDoesNotExist, ValueError, TypeError):
         inscridipl= None
     if inscridipl is not None:
         if inscridipl.alternant :
-            nbreetudiants = Inscriptiondiplome.objects.filter(anneeuniv=anneeunivencours,alternant = True).count()
+            nbreetudiants = Inscriptiondiplome.objects.filter(anneeuniv=anneeuniv,alternant = True).count()
         else :
-            nbreetudiants = Inscriptiondiplome.objects.filter(anneeuniv=anneeunivencours,alternant = False).count()
+            nbreetudiants = Inscriptiondiplome.objects.filter(anneeuniv=anneeuniv,alternant = False).count()
 
 
         
    
-    ListeInscritmat =Inscriptionmat.objects.filter(inscriptiondiplome__etudiant=etudiant )
-    if(not(anneeunivencours.S2)):
+    ListeInscritmat =Inscriptionmat.objects.filter(inscriptiondiplome__etudiant=etudiant ,inscriptiondiplome__anneeuniv__datedebut__lte=anneeuniv.datedebut)
+    if(not(anneeuniv.S2)):
         ListeInscritmat = ListeInscritmat.filter(matiere__semestre ="S5")
     ListeInscritmat = ListeInscritmat.order_by('matiere__semestre','matiere__nom','inscriptiondiplome__anneeuniv')
 
@@ -161,7 +164,7 @@ def vueetudiant(request, id):
     templateData ['listeinscritmat']=ListeInscritmat
     templateData ['insdiplome']=inscridipl
     templateData ['listeinsdiplome']=listeinsdiplome
-    templateData['S2']=anneeunivencours.S2 
+    templateData['S2']=anneeuniv.S2 
 
     templateData['nbreetudiants'] = nbreetudiants
     return render (request,'etudiant/vueetudiant.html'
