@@ -86,7 +86,7 @@ def juryS5(request,rang):
 
     listeinsdiplomeetu = Inscriptiondiplome.objects.filter(etudiant=etudiant)
     listeinsdiplomeetu =listeinsdiplomeetu.order_by('anneeuniv__datedebut')
-    ListeInscritmat =Inscriptionmat.objects.filter(inscriptiondiplome__etudiant=etudiant,matiere__semestre ="S5" )
+    ListeInscritmat =Inscriptionmat.objects.filter(inscriptiondiplome__etudiant=etudiant,matiere__semestre ="S5" ).order_by("matiere__nom")
     
     templateData = {}
     templateData ['titre']= "Jury S5 : " +anneeuniv.anneeuniv

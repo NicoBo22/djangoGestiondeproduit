@@ -31,7 +31,10 @@
                         <a href="{% url 'tableurxl:uploadexcelnotesmat' codemat=matiere.codeapogee  %}"
                             class="btn bg-danger text-white">
                             {{ matiere.codeapogee }}
-                        </a>
+                            <a href="{% url 'tableurxl:uploadexcelnotesmat2' codemat=matiere.codeapogee  %}"
+                                class="btn bg-danger text-white">
+                                {{ matiere.codeapogee }} ITEM CC
+                            </a>
                     </th>
                     <td>{{ matiere.nom }}</td>
                     <td>{{ matiere.coefcc1 }}</td>
